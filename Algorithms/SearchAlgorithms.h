@@ -4,5 +4,7 @@
 
 #ifndef AI_PROJECT_SEARCHALGORITHMS_H
 #define AI_PROJECT_SEARCHALGORITHMS_H
-int uniformCostSearch(int **array, int *start, int *target);
+
+int uniformCostSearch(int **array, int dimension, int *start, int *target);
+
 #endif //AI_PROJECT_SEARCHALGORITHMS_H

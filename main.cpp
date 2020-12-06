@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     sourceStr.erase(0,sourceStr.find(',') + 1);
     source[1] = stoi(sourceStr);
     target[0] = stoi(targetStr.substr(0,sourceStr.find(',')));
-    target.erase(0,targetStr.find(',') + 1);
+    targetStr.erase(0,targetStr.find(',') + 1);
     target[1] = stoi(targetStr);
     int d = stoi(dimension);
     string tmpStr;
@@ -39,7 +39,8 @@ int main(int argc, char *argv[]) {
             array[i][j] = stoi(token);
             tmpStr.erase(0, pos + 1);
         }
-
     }
+    uniformCostSearch(array,d,source,target);
+
     return 0;
 }
