@@ -76,13 +76,25 @@ int uniformCostSearch(int **array, int dimension, int *start, int *target) {
     Node current_node;
     openList.push_back(sourceNode);
     while (!openList.empty()) {
-        sort(openList.begin(), openList.end());
+        sort(openList.begin(), openList.end(),greater<Node>());
         current_node = openList.back();
         openList.pop_back();
         if (current_node == goalNode) {
             for (const auto & i : current_node.getPathTilNow()) {
                 cout << i.first << ','<<i.second<<endl;
             }
+            for(int i=0;i<dimension;++i){
+                for(int j=0;j<dimension;++j){
+                    pair<int,int> p = pair<int,int>(i,j);
+                    if(count(current_node.getPathTilNow().begin(),current_node.getPathTilNow().end(),p))
+                        cout << "\033[1;31m" << '(' << array[i][j] << ")," << "\033[0m";
+                    else
+                        cout << '(' << array[i][j] << "),";
+                }
+                cout << endl;
+            }
+            cout << "path cost: " << current_node.getCost() << endl;
+            cout << "nodes explored: " <<explored.size() << endl;
             // reached to goal state
             return 0;
         }
@@ -205,6 +217,7 @@ const vector<pair<int, int>> &Node::getPathTilNow() const {
 }
 
 void Node::setPathTilNow(const vector<pair<int, int>> &pathTilNow) {
+    this->path_til_now.clear();
     for (pair<int, int> p :pathTilNow) {
         this->path_til_now.push_back(p);
     }
