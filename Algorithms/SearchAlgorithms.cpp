@@ -10,7 +10,7 @@
 #define ACTIONS_SIZE 7
 using namespace std;
 enum actions {
-    u, ur, r, dr, d, dl, l, ul
+    RU, R, RD, D, LD, L, LU, U
 };
 
 
@@ -50,35 +50,35 @@ int uniformCostSearch(int **array, int dimension, int *start, int *target) {
 
         for (int i = 0; i < ACTIONS_SIZE; ++i) {
             switch (actions(i)) {
-                case u:
+                case U:
                     x = current_node.getRow() - 1;
                     y = current_node.getCol();
                     break;
-                case ur:
+                case RU:
                     x = current_node.getRow() - 1;
                     y = current_node.getCol() + 1;
                     break;
-                case r:
+                case R:
                     x = current_node.getRow();
                     y = current_node.getCol() + 1;
                     break;
-                case dr:
+                case RD:
                     x = current_node.getRow() + 1;
                     y = current_node.getCol() + 1;
                     break;
-                case d:
+                case D:
                     x = current_node.getRow() + 1;
                     y = current_node.getCol();
                     break;
-                case dl:
+                case LD:
                     x = current_node.getRow() + 1;
                     y = current_node.getCol() - 1;
                     break;
-                case l:
+                case L:
                     x = current_node.getRow();
                     y = current_node.getCol() - 1;
                     break;
-                case ul:
+                case LU:
                     x = current_node.getRow() - 1;
                     y = current_node.getCol() - 1;
                     break;
