@@ -41,10 +41,12 @@ int main(int argc, char *argv[]) {
         }
     }
     uniformCostSearch(array,d,source,target);
+//    IDS(array, d, source, target);
     delete [] source;
     delete [] target;
     for (int i = 0; i < d; ++i) {
         delete [] array[i];
     }
+    delete[] array;
     return 0;
 }

@@ -32,8 +32,9 @@ void Node::insertElementToPath(const pair<int, int> &p) {
 
 void Node::setPathTilNow(const vector<pair<int, int>> &pathTilNow) {
     this->_path_til_now.clear();
-    for(auto &item : pathTilNow){
-        this->_path_til_now.push_back(item);
-    }
+    this->_path_til_now = vector<pair<int,int>>(pathTilNow);
+//    for(auto &item : pathTilNow){
+//        this->_path_til_now.push_back(item);
+//    }
 }
 
