@@ -11,6 +11,6 @@ int uniformCostSearch(int **array, int dimension, int *start, int *target);
 
 int IDS(int **array, int dimension, int *source, int *goal);
 
-pair<Node*,bool > DLS(int **array,int dimension,Node *current_node,Node *goal,int depth);
+pair<Node*,bool > DLS(int **array,int dimension,Node *current_node,Node *goal,int limit);
 
 #endif //AI_PROJECT_SEARCHALGORITHMS_H

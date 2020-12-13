@@ -40,8 +40,8 @@ int main(int argc, char *argv[]) {
             tmpStr.erase(0, pos + 1);
         }
     }
-    uniformCostSearch(array,d,source,target);
-//    IDS(array, d, source, target);
+//    uniformCostSearch(array,d,source,target);
+    IDS(array, d, source, target);
     delete [] source;
     delete [] target;
     for (int i = 0; i < d; ++i) {

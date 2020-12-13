@@ -17,12 +17,14 @@ private:
     vector<pair<int, int>> _path_til_now;
     int _row;
     int _col;
+    int _depth;
 public:
-    Node() : _path_cost(0), _row(0), _col(0) {};
+    Node() : _path_cost(0), _row(0), _col(0), _depth(0) {};
 
-    Node(int cost, int row, int col) : _path_cost(cost), _row(row), _col(col) {};
+    Node(int cost, int row, int col, int depth) : _path_cost(cost), _row(row), _col(col), _depth(depth) {};
 
-    Node(const Node &node) : _path_cost(node.getPathCost()), _row(node.getRow()), _col(node.getCol()) {
+    Node(const Node &node) : _path_cost(node.getPathCost()), _row(node.getRow()), _col(node.getCol()),
+                             _depth(node.getDepth()) {
         this->setPathTilNow(node.getPathTilNow());
     };
 
@@ -56,15 +58,21 @@ public:
         _col = col;
     }
 
-    void insertElementToPath(const pair<int,int> &p);
+    int getDepth() const;
+
+    void setDepth(int depth);
+
+    void insertElementToPath(const pair<int, int> &p);
 
     Node &operator=(const Node &node);
 
-    static bool lessThenNodePtr(Node *node1,Node *node2){return *node1 < *node2;}
+    static bool lessThenNodePtr(Node *node1, Node *node2) { return *node1 < *node2; }
 
-    static bool equalToNodePtr(Node *node1,Node *node2){return *node1 == *node2;}
+    static bool equalToNodePtr(Node *node1, Node *node2) { return *node1 == *node2; }
 
     friend bool operator==(const Node &node1, const Node &node2);
+
+    friend bool operator!=(const Node &node1, const Node &node2);
 
     friend bool operator>(const Node &node1, const Node &node2);
 
