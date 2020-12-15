@@ -3,18 +3,26 @@
 #include <cstring>
 #include <algorithm>
 #include "Algorithms/SearchAlgorithms.h"
+#include "Algorithms/IterativeDeepeningSearch.h"
+#include "Algorithms/AStarSearch.h"
+#include "Algorithms/IDAStarSearch.h"
 
 using namespace std;
 
+int heuristic_function(pair<int,int> p1,pair<int,int> p2){
+    return sqrt(pow(p1.first-p2.first,2)+pow(p1.second-p2.second,2));
+//    return 0;
+}
+
 int main(int argc, char *argv[]) {
-    string algo, dimension, sourceStr, targetStr;
+    string algorithm_name, dimension, sourceStr, targetStr;
     auto *source = new int[2];
     auto *target = new int[2];
     if (argc < 2) {
         exit(1);
     }
     ifstream inputFile(argv[1]);
-    getline(inputFile, algo, '\n');
+    getline(inputFile, algorithm_name, '\n');
     getline(inputFile, dimension, '\n');
     getline(inputFile, sourceStr, '\n');
     getline(inputFile, targetStr, '\n');
@@ -40,8 +48,12 @@ int main(int argc, char *argv[]) {
             tmpStr.erase(0, pos + 1);
         }
     }
-//    uniformCostSearch(array,d,source,target);
-    IDS(array, d, source, target);
+
+//    IterativeDeepeningSearch::getInstance().run_algorithm(array,d,source,target,0);
+//    AStarSearch::getInstance().setHeuristicFunction(heuristic_function);
+//    AStarSearch::getInstance().run_algorithm(array,d,source,target,10);
+    IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
+    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,0);
     delete [] source;
     delete [] target;
     for (int i = 0; i < d; ++i) {

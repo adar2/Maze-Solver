@@ -6,7 +6,7 @@
 
 Node &Node::operator=(const Node &node) {
     if (this != &node) {
-        this->_path_cost = node.getPathCost();
+        this->_heuristic_cost = node.getHeuristicCost();
         this->_row = node.getRow();
         this->_col = node.getCol();
         this->setPathTilNow(node.getPathTilNow());
@@ -19,11 +19,11 @@ bool operator==(const Node &node1, const Node &node2) {
 }
 
 bool operator>(const Node &node1, const Node &node2) {
-    return node1.getPathCost() > node2.getPathCost();
+    return node1.getHeuristicCost() > node2.getHeuristicCost();
 }
 
 bool operator<(const Node &node1, const Node &node2) {
-    return node1.getPathCost() < node2.getPathCost();
+    return node1.getHeuristicCost() < node2.getHeuristicCost();
 }
 
 void Node::insertElementToPath(const pair<int, int> &p) {
@@ -45,5 +45,21 @@ void Node::setDepth(int depth) {
 
 bool operator!=(const Node &node1, const Node &node2) {
     return node1.getRow() != node2.getRow() || node1.getCol() != node2.getCol();
+}
+
+int Node::getHeuristicCost() const {
+    return _heuristic_cost;
+}
+
+void Node::setHeuristicCost(int heuristicCost) {
+    _heuristic_cost = heuristicCost;
+}
+
+int Node::getActualCost() const {
+    return _actual_cost;
+}
+
+void Node::setActualCost(int actualCost) {
+    _actual_cost = actualCost;
 }
 
