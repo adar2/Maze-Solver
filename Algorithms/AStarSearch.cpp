@@ -3,49 +3,53 @@
 //
 
 #include "AStarSearch.h"
+#include <vector>
+#include <set>
 
-
+using std::vector;
 using std::unordered_map;
 using std::cout;
 using std::endl;
 
+multiset<Node>::iterator set_find(multiset<Node>::iterator start,multiset<Node>::iterator end,Node node){
+    while(start!=end){
+        if(*start == node)
+            return start;
+        ++start;
+    }
+    return end;
+}
+
 
 int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
-    unordered_map<pair<int, int>, bool, pair_hash> explored = unordered_map<pair<int, int>, bool, pair_hash>();
+    unordered_map<pair<int, int>, Node, pair_hash> explored = unordered_map<pair<int, int>, Node, pair_hash>();
     vector<Node> openList = vector<Node>();
-    Node sourceNode = Node(heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1])),
+    Node sourceNode = Node(_heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1])),
                            0, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     Node goalNode = Node(0, 0, goal[0], goal[1], 0);
     Node current_node;
-    int row = 0, col = 0;
+    int row = 0, col = 0, expand_counter;
     openList.push_back(sourceNode);
     while (!openList.empty()) {
         setCurrentTime(time(nullptr));
-        if (difftime(getCurrentTime(), getStartTime()) >= time_limit)
-            return 3;//time out
-        sort(openList.begin(), openList.end(), std::greater<Node>());
+//        if (difftime(getCurrentTime(), getStartTime()) >= time_limit)
+//            return 3;//time out
+        std::sort(openList.begin(),openList.end(),std::greater<Node>());
         current_node = openList.back();
         openList.pop_back();
         if (current_node == goalNode) {
+            setCurrentTime(time(nullptr));
             double depth = current_node.getPathTilNow().size();
             setExplored(explored.size());
             setDN(depth / getExplored());
             setEbf(pow(getExplored(), pow(depth, -1)));
-            for (int i = 0; i < dimension; ++i) {
-                for (int j = 0; j < dimension; ++j) {
-                    pair<int, int> p = pair<int, int>(i, j);
-                    if (count(current_node.getPathTilNow().begin(), current_node.getPathTilNow().end(), p))
-                        cout << "\033[1;31m" << '(' << array[i][j] << ")," << "\033[0m";
-                    else
-                        cout << '(' << array[i][j] << "),";
-                }
-                cout << endl;
-            }
-            generate_stats();
+            generate_stats(current_node);
             return 0;
         }
-        explored[pair<int, int>(current_node.getRow(), current_node.getCol())] = true;
+        explored[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
+        // zero the expand counter for the current node in order to check cutoffs
+        expand_counter = 0;
         for (int i = 0; i < ACTIONS_SIZE; ++i) {
             switch (actions(i)) {
                 case U:
@@ -83,19 +87,35 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             }
             if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
                 continue;
+            expand_counter++;
             int g_cost = array[row][col] + current_node.getActualCost();
-            int f_cost = g_cost + heuristic_function(pair<int, int>(row, col),
-                                                     pair<int, int>(goalNode.getRow(), goalNode.getCol()));
+            int f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
+                                                      pair<int, int>(goalNode.getRow(), goalNode.getCol()));
             Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
             node.setPathTilNow(current_node.getPathTilNow());
             node.insertElementToPath(pair<int, int>(row, col));
-            if (!explored[pair<int, int>(row, col)] && !count(openList.begin(), openList.end(), node))
+            auto open_list_iterator = std::find(openList.begin(),openList.end(),node);
+            auto explored_iterator = explored.find(pair<int, int>(row, col));
+            if (explored_iterator == explored.end() && open_list_iterator == openList.end())
                 openList.push_back(node);
-            else if (find(openList.begin(), openList.end(), node) != openList.end() &&
-                     find(openList.begin(), openList.end(), node)->getHeuristicCost() > node.getHeuristicCost()) {
-                openList.erase(find(openList.begin(), openList.end(), node));
+            else if (open_list_iterator != openList.end() &&
+                     open_list_iterator->getHeuristicCost() > node.getHeuristicCost()) {
+                openList.erase(open_list_iterator);
+                openList.push_back(node);
+            } else if (explored_iterator != explored.end() &&
+                       explored_iterator->second.getHeuristicCost() > node.getHeuristicCost()) {
+                explored.erase(explored_iterator);
                 openList.push_back(node);
             }
+
+        }
+        if (!expand_counter) {
+            // cut off occurrence
+            if (getInstance().getMin() == 0 || getInstance().getMin() > current_node.getDepth())
+                getInstance().setMin(current_node.getDepth());
+            if (getInstance().getMax() == 0 || getInstance().getMax() < current_node.getDepth())
+                getInstance().setMax(current_node.getDepth());
+            getInstance().addCutoffToSum(current_node.getDepth());
         }
     }
     return 1;

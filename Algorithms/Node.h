@@ -7,7 +7,7 @@
 
 #include <utility>
 #include <vector>
-
+#include <queue>
 #define ACTIONS_SIZE 7
 
 enum actions {
@@ -15,14 +15,14 @@ enum actions {
 };
 
 using std::vector;
-
+using std::queue;
 using std::pair;
 
 class Node {
 private:
     int _heuristic_cost;
     int _actual_cost;
-    vector<pair<int, int>> _path_til_now;
+    queue<pair<int, int>> _path_til_now;
     int _row;
     int _col;
     int _depth;
@@ -39,11 +39,8 @@ public:
         this->setPathTilNow(node.getPathTilNow());
     };
 
-//    int getPathCost() const {
-//        return _heuristic_cost;
-//    }
 
-    const vector<pair<int, int>> &getPathTilNow() const {
+    const queue<pair<int, int>> &getPathTilNow() const {
         return _path_til_now;
     }
 
@@ -55,11 +52,7 @@ public:
         return _col;
     }
 
-    void setPathCost(int pathCost) {
-        _heuristic_cost = pathCost;
-    }
-
-    void setPathTilNow(const vector<pair<int, int>> &pathTilNow);
+    void setPathTilNow(const queue<pair<int, int>> &pathTilNow);
 
     void insertElementToPath(const pair<int, int> &p);
 

@@ -12,11 +12,18 @@ using std::pair;
 class HeuristicSearch {
 
 protected:
-    int (*heuristic_function)(pair<int, int>, pair<int, int>);
+    int (*_heuristic_function)(const pair<int, int>&,const pair<int, int>&);
+
+    double _nodes_heuristic_sum;
+    int _no_of_nodes;
 
 public:
     void setHeuristicFunction(
-            int (*heuristicFunction)(pair<int, int>, pair<int, int>)) { heuristic_function = heuristicFunction; };
+            int (*heuristicFunction)(const pair<int, int>&,const pair<int, int>&));
+
+    void sumNodeHeuristic(int h);
+
+    double getAvg() const;
 
 };
 

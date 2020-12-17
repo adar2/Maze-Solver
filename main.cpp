@@ -9,7 +9,7 @@
 
 using namespace std;
 
-int heuristic_function(pair<int,int> p1,pair<int,int> p2){
+int heuristic_function(const pair<int,int> &p1,const pair<int,int> &p2){
     return sqrt(pow(p1.first-p2.first,2)+pow(p1.second-p2.second,2));
 //    return 0;
 }
@@ -50,10 +50,10 @@ int main(int argc, char *argv[]) {
     }
 
 //    IterativeDeepeningSearch::getInstance().run_algorithm(array,d,source,target,0);
-//    AStarSearch::getInstance().setHeuristicFunction(heuristic_function);
-//    AStarSearch::getInstance().run_algorithm(array,d,source,target,10);
-    IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
-    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,0);
+    AStarSearch::getInstance().setHeuristicFunction(heuristic_function);
+    AStarSearch::getInstance().run_algorithm(array,d,source,target,10);
+//    IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
+//    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,0);
     delete [] source;
     delete [] target;
     for (int i = 0; i < d; ++i) {

@@ -2,8 +2,8 @@
 // Created by r00t on 12/13/20.
 //
 
-#ifndef AI_PROJECT_SEARCHALGORITHMINTERFACE_H
-#define AI_PROJECT_SEARCHALGORITHMINTERFACE_H
+#ifndef AI_PROJECT_SEARCHALGORITHMBASECLASS_H
+#define AI_PROJECT_SEARCHALGORITHMBASECLASS_H
 
 #include <iostream>
 #include <string>
@@ -14,7 +14,7 @@
 #include <ctime>
 #include "Node.h"
 
-class SearchAlgorithmInterface {
+class SearchAlgorithmBaseClass {
 protected:
     double _dN;
     double _ebf;
@@ -22,10 +22,12 @@ protected:
     double _min;
     double _avg;
     double _max;
+    double _no_of_cutoffs{};
+    double _sum_of_cutoffs_depths{};
     time_t _start_time;
-    time_t _current_time;
+    time_t _current_time{};
 
-    SearchAlgorithmInterface() : _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(time(nullptr)) {}
+    SearchAlgorithmBaseClass() : _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(time(nullptr)) {}
 
 public:
     double getDN() const { return _dN; };
@@ -44,13 +46,19 @@ public:
 
     void setMin(double min) { _min = min; };
 
-    double getAvg() const { return _avg; };
-
-    void setAvg(double avg) { _avg = avg; };
+    double getAvg() const {
+        if (_no_of_cutoffs == 0)return 0;
+        return _sum_of_cutoffs_depths / _no_of_cutoffs;
+    };
 
     double getMax() const { return _max; };
 
     void setMax(double max) { _max = max; };
+
+    void addCutoffToSum(int cut_off_depth) {
+        _sum_of_cutoffs_depths += cut_off_depth;
+        _no_of_cutoffs++;
+    }
 
     time_t getStartTime() const {
         return _start_time;
@@ -66,13 +74,20 @@ public:
 
     virtual int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) = 0;
 
-    virtual void generate_stats() {
-        std::cout << "d/N : " << _dN << std::endl;
-        std::cout << "EBF : " << _ebf << std::endl;
-        std::cout << "total nodes explored: " << _explored << std::endl;
-        std::cout << "Min cutoff : " << _min << std::endl;
-        std::cout << "Max cutoff : " << _max << std::endl;
-        std::cout << "Avg cutoff : " << _avg << std::endl;
+    virtual void generate_stats(const Node &goalNode) {
+        std::queue<pair<int,int>> path = std::queue<pair<int,int>> (goalNode.getPathTilNow());
+        while (!path.empty()){
+            std::cout << path.front().first << ',' << path.front().second << ':';
+            path.pop();
+        }
+        std::cout << std::endl;
+        std::cout << "solution/failure time: " << difftime(getCurrentTime(),getStartTime()) << std::endl;
+        std::cout << "d/N : " << getDN() << std::endl;
+        std::cout << "EBF : " << getEbf() << std::endl;
+        std::cout << "total nodes explored: " << getExplored() << std::endl;
+        std::cout << "Min cutoff : " << getMin() << std::endl;
+        std::cout << "Max cutoff : " << getMax() << std::endl;
+        std::cout << "Avg cutoff : " << getAvg() << std::endl;
     };
 };
 
@@ -108,4 +123,4 @@ struct pair_hash {
     }
 };
 
-#endif //AI_PROJECT_SEARCHALGORITHMINTERFACE_H
+#endif //AI_PROJECT_SEARCHALGORITHMBASECLASS_H

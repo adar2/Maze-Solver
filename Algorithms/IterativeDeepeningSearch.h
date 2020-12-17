@@ -5,13 +5,13 @@
 #ifndef AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 #define AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 
-#include "SearchAlgorithmInterface.h"
+#include "SearchAlgorithmBaseClass.h"
 
-class IterativeDeepeningSearch : public SearchAlgorithmInterface {
+class IterativeDeepeningSearch : public SearchAlgorithmBaseClass {
 private:
-    static Node *DLS(int **array, int dimension, Node *root, Node *goal, int limit);
+    pair<Node *, bool> DLS(int **array, int dimension, Node *root, Node *goal, int limit);
 
-    IterativeDeepeningSearch() : SearchAlgorithmInterface() {};
+    IterativeDeepeningSearch() : SearchAlgorithmBaseClass() {};
 
     IterativeDeepeningSearch(const IterativeDeepeningSearch &);
 

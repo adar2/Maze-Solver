@@ -5,13 +5,13 @@
 #ifndef AI_PROJECT_IDASTARSEARCH_H
 #define AI_PROJECT_IDASTARSEARCH_H
 
-#include "SearchAlgorithmInterface.h"
+#include "SearchAlgorithmBaseClass.h"
 #include "HeuristicSearch.h"
 #include <tuple>
 
-class IDAStarSearch : public SearchAlgorithmInterface, public HeuristicSearch {
+class IDAStarSearch : public SearchAlgorithmBaseClass, public HeuristicSearch {
 private:
-    IDAStarSearch() : SearchAlgorithmInterface(), HeuristicSearch() {};
+    IDAStarSearch() : SearchAlgorithmBaseClass(), HeuristicSearch() {};
 
     IDAStarSearch(const IDAStarSearch &);
 
