@@ -11,14 +11,7 @@ using std::unordered_map;
 using std::cout;
 using std::endl;
 
-multiset<Node>::iterator set_find(multiset<Node>::iterator start,multiset<Node>::iterator end,Node node){
-    while(start!=end){
-        if(*start == node)
-            return start;
-        ++start;
-    }
-    return end;
-}
+
 
 
 int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
