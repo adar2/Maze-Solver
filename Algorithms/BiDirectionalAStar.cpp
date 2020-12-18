@@ -25,8 +25,10 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         if (!frontier_front.empty()) {
             current_node = *frontier_front.begin();
             frontier_front.erase(current_node);
-            if (current_node == goalNode || frontier_back.count(current_node))
+            if (current_node == goalNode || frontier_back.count(current_node)){
+                print_path(array,dimension,current_node);
                 return 0;
+            }
             expand_counter = 0;
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {
@@ -91,8 +93,10 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         if(!frontier_back.empty()){
             current_node = *frontier_back.begin();
             frontier_back.erase(current_node);
-            if (current_node == sourceNode || frontier_front.count(current_node))
+            if (current_node == sourceNode || frontier_front.count(current_node)){
+                print_path(array,dimension,current_node);
                 return 0;
+            }
             expand_counter = 0;
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {

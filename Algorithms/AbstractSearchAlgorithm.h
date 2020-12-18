@@ -128,5 +128,26 @@ struct pair_hash {
         return hash_val(p.first, p.second);
     }
 };
+// for debugging purposes
+static void print_path(int **array,int dimension,Node &current_node){
+    auto current_path = current_node.getPathTilNow();
+    pair<int, int> current = current_path.front();
+    pair<int, int> p;
+    current_path.pop();
+    for (int i = 0; i < dimension; ++i) {
+        for (int j = 0; j < dimension; ++j) {
+            p = pair<int, int>(i, j);
+            if (current == p){
+                std::cout << "\033[1;31m" << '(' << array[i][j] << "), " << "\033[0m";
+                current = current_path.front();
+                current_path.pop();
+            }
+
+            else
+                std::cout << '(' << array[i][j] << "), ";
+        }
+        std::cout << std::endl;
+    }
+}
 
 #endif //AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
