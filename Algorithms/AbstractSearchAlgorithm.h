@@ -124,17 +124,12 @@ struct pair_hash {
 };
 // for debugging purposes
 static void print_path(int **array,int dimension,Node &current_node){
-    auto current_path = current_node.getPathTilNow();
-    pair<int, int> current = current_path.front();
-    pair<int, int> p;
-    current_path.pop();
+    auto path_start = current_node.getPathTilNow().begin();
+    auto path_end = current_node.getPathTilNow().end();
     for (int i = 0; i < dimension; ++i) {
         for (int j = 0; j < dimension; ++j) {
-            p = pair<int, int>(i, j);
-            if (current == p){
+            if (std::find(path_start,path_end,pair<int,int>(i,j)) != path_end){
                 std::cout << "\033[1;31m" << '(' << array[i][j] << "), " << "\033[0m";
-                current = current_path.front();
-                current_path.pop();
             }
 
             else

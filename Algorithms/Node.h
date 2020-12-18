@@ -16,14 +16,14 @@ enum actions {
 };
 
 using std::vector;
-using std::queue;
+using std::deque;
 using std::pair;
 
 class Node {
 private:
     int _heuristic_cost;
     int _actual_cost;
-    queue<pair<int, int>> _path_til_now;
+    deque<pair<int, int>> _path_til_now;
     int _row;
     int _col;
     int _depth;
@@ -41,7 +41,7 @@ public:
     };
 
 
-    const queue<pair<int, int>> &getPathTilNow() const {
+    const deque<pair<int, int>> &getPathTilNow() const {
         return _path_til_now;
     }
 
@@ -53,7 +53,7 @@ public:
         return _col;
     }
 
-    void setPathTilNow(const queue<pair<int, int>> &pathTilNow);
+    void setPathTilNow(const deque<pair<int, int>> &pathTilNow);
 
     void insertElementToPath(const pair<int, int> &p);
 

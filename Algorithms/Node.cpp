@@ -34,11 +34,11 @@ bool operator<(const Node &node1, const Node &node2) {
 }
 
 void Node::insertElementToPath(const pair<int, int> &p) {
-    this->_path_til_now.push(p);
+    this->_path_til_now.push_back(p);
 }
 
-void Node::setPathTilNow(const queue<pair<int, int>> &pathTilNow) {
-    this->_path_til_now = queue<pair<int, int>>(pathTilNow);
+void Node::setPathTilNow(const deque<pair<int, int>> &pathTilNow) {
+    this->_path_til_now = deque<pair<int, int>>(pathTilNow);
 }
 
 int Node::getDepth() const {
