@@ -23,6 +23,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
         found = std::get<0>(results_tuple);
         f_limit = std::get<1>(results_tuple);
         if (found != nullptr) {
+            print_path(array,dimension,*found);
             generate_stats();
             delete found;
             delete root;
@@ -85,6 +86,9 @@ IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node 
                 break;
         }
         if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
+            continue;
+        // avoid expanding nodes that are currently in the path
+        if(std::find(current_node->getPathTilNow().begin(),current_node->getPathTilNow().end(),pair<int, int>(row, col)) != current_node->getPathTilNow().end())
             continue;
         expand_counter++;
         g_cost = array[row][col] + current_node->getActualCost();
