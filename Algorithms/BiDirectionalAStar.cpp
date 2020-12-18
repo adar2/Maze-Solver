@@ -26,9 +26,12 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             current_node = *frontier_front.begin();
             frontier_front.erase(current_node);
             if (current_node == goalNode || frontier_back.count(current_node)){
+                setExplored(visited.size());
                 print_path(array,dimension,current_node);
+                generate_stats();
                 return 0;
             }
+            visited[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
             expand_counter = 0;
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {
@@ -89,14 +92,25 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                     frontier_front.insert(node);
                 }
             }
+            if (!expand_counter) {
+                // cut off occurrence
+                if (getInstance().getMin() == 0 || getInstance().getMin() > current_node.getDepth())
+                    getInstance().setMin(current_node.getDepth());
+                if (getInstance().getMax() == 0 || getInstance().getMax() < current_node.getDepth())
+                    getInstance().setMax(current_node.getDepth());
+                getInstance().addCutoffToSum(current_node.getDepth());
+            }
         }
         if(!frontier_back.empty()){
             current_node = *frontier_back.begin();
             frontier_back.erase(current_node);
             if (current_node == sourceNode || frontier_front.count(current_node)){
+                setExplored(visited.size());
                 print_path(array,dimension,current_node);
+                generate_stats();
                 return 0;
             }
+            visited[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
             expand_counter = 0;
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {
@@ -147,7 +161,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                 auto explored_iterator = visited.find(pair<int, int>(row, col));
                 if (explored_iterator == visited.end() && open_list_iterator == frontier_back.end())
                     frontier_back.insert(node);
-                else if (open_list_iterator != frontier_front.end() &&
+                else if (open_list_iterator != frontier_back.end() &&
                          open_list_iterator->getHeuristicCost() > node.getHeuristicCost()) {
                     frontier_back.erase(open_list_iterator);
                     frontier_back.insert(node);
@@ -156,6 +170,14 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                     visited.erase(explored_iterator);
                     frontier_back.insert(node);
                 }
+            }
+            if (!expand_counter) {
+                // cut off occurrence
+                if (getInstance().getMin() == 0 || getInstance().getMin() > current_node.getDepth())
+                    getInstance().setMin(current_node.getDepth());
+                if (getInstance().getMax() == 0 || getInstance().getMax() < current_node.getDepth())
+                    getInstance().setMax(current_node.getDepth());
+                getInstance().addCutoffToSum(current_node.getDepth());
             }
         }
     }

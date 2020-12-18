@@ -132,7 +132,9 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
             // found the node
             delete root;
             delete target;
-            generate_stats(*found);
+            print_path(array,dimension,*found);
+            generate_stats();
+            std::cout << found->getActualCost();
             delete found;
             return 0;// return success.
         }

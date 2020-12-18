@@ -80,13 +80,7 @@ public:
 
     virtual int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) = 0;
 
-    virtual void generate_stats(const Node &goalNode) {
-        std::queue<pair<int, int>> path = std::queue<pair<int, int>>(goalNode.getPathTilNow());
-        while (!path.empty()) {
-            std::cout << path.front().first << ',' << path.front().second << ':';
-            path.pop();
-        }
-        std::cout << std::endl;
+    virtual void generate_stats() {
         std::cout << "solution/failure time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
         std::cout << "d/N : " << getDN() << std::endl;
         std::cout << "EBF : " << getEbf() << std::endl;

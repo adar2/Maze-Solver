@@ -34,7 +34,8 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             setExplored(visited.size());
             setDN(depth / getExplored());
             setEbf(pow(getExplored(), pow(depth, -1)));
-            generate_stats(current_node);
+            print_path(array,dimension,current_node);
+            generate_stats();
             return 0;
         }
         visited[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;

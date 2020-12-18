@@ -23,7 +23,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
         found = std::get<0>(results_tuple);
         f_limit = std::get<1>(results_tuple);
         if (found != nullptr) {
-            generate_stats(*found);
+            generate_stats();
             delete found;
             delete root;
             delete target;

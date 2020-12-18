@@ -11,6 +11,7 @@ Node &Node::operator=(const Node &node) {
         this->_row = node.getRow();
         this->_col = node.getCol();
         this->setPathTilNow(node.getPathTilNow());
+        this->_depth = node.getDepth();
     }
     return *this;
 }
