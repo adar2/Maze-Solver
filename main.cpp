@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 //    AStarSearch::getInstance().setHeuristicFunction(heuristic_function);
 //    AStarSearch::getInstance().run_algorithm(array, d, source, target, 10);
     IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
-    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,40);
+    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,1000);
 //    BiDirectionalAStar::getInstance().setHeuristicFunction(heuristic_function);
 //    BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, 10);
     delete[] source;

@@ -43,7 +43,7 @@ std::tuple<Node *, int>
 IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node *goal, int f_limit,float time_limit) {
     Node *found, *node;
     std::tuple<Node *, int> results_tuple;
-    int row = 0, col = 0, new_f = 0, expand_counter = 0;
+    int row = 0, col = 0, new_f = 0, expand_counter = 0,g_cost,f_cost;
     int next_f = std::numeric_limits<int>::max();
     int current_node_f = current_node->getHeuristicCost();
     setCurrentTime(clock());
@@ -87,9 +87,8 @@ IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node 
         if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
             continue;
         expand_counter++;
-        int g_cost = array[row][col] + current_node->getActualCost();
-        int f_cost =
-                g_cost + _heuristic_function(pair<int, int>(row, col), pair<int, int>(goal->getRow(), goal->getCol()));
+        g_cost = array[row][col] + current_node->getActualCost();
+        f_cost =g_cost + _heuristic_function(pair<int, int>(row, col), pair<int, int>(goal->getRow(), goal->getCol()));
         node = new Node(f_cost, g_cost, row, col, current_node->getDepth() + 1);
         node->setPathTilNow(current_node->getPathTilNow());
         node->insertElementToPath(pair<int, int>(row, col));
