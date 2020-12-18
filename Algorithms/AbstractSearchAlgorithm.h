@@ -2,8 +2,8 @@
 // Created by r00t on 12/13/20.
 //
 
-#ifndef AI_PROJECT_SEARCHALGORITHMBASECLASS_H
-#define AI_PROJECT_SEARCHALGORITHMBASECLASS_H
+#ifndef AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
+#define AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
 
 #include <iostream>
 #include <string>
@@ -14,7 +14,7 @@
 #include <ctime>
 #include "Node.h"
 
-class SearchAlgorithmBaseClass {
+class AbstractSearchAlgorithm {
 protected:
     double _dN;
     double _ebf;
@@ -24,10 +24,10 @@ protected:
     double _max;
     double _no_of_cutoffs{};
     double _sum_of_cutoffs_depths{};
-    time_t _start_time;
-    time_t _current_time{};
+    clock_t _start_time;
+    clock_t _current_time{};
 
-    SearchAlgorithmBaseClass() : _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(time(nullptr)) {}
+    AbstractSearchAlgorithm() : _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(clock()) {}
 
 public:
     double getDN() const { return _dN; };
@@ -60,28 +60,34 @@ public:
         _no_of_cutoffs++;
     }
 
-    time_t getStartTime() const {
+    clock_t getStartTime() const {
         return _start_time;
     }
 
-    time_t getCurrentTime() const {
+    clock_t getCurrentTime() const {
         return _current_time;
     }
 
-    void setCurrentTime(time_t currentTime) {
+    void setCurrentTime(clock_t currentTime) {
         _current_time = currentTime;
+    }
+
+    double diff_clock(clock_t clock1, clock_t clock2) {
+        double diffticks = clock1 - clock2;
+        double diffms = (diffticks) / (CLOCKS_PER_SEC / 1000);
+        return diffms/1000;
     }
 
     virtual int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) = 0;
 
     virtual void generate_stats(const Node &goalNode) {
-        std::queue<pair<int,int>> path = std::queue<pair<int,int>> (goalNode.getPathTilNow());
-        while (!path.empty()){
+        std::queue<pair<int, int>> path = std::queue<pair<int, int>>(goalNode.getPathTilNow());
+        while (!path.empty()) {
             std::cout << path.front().first << ',' << path.front().second << ':';
             path.pop();
         }
         std::cout << std::endl;
-        std::cout << "solution/failure time: " << difftime(getCurrentTime(),getStartTime()) << std::endl;
+        std::cout << "solution/failure time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
         std::cout << "d/N : " << getDN() << std::endl;
         std::cout << "EBF : " << getEbf() << std::endl;
         std::cout << "total nodes explored: " << getExplored() << std::endl;
@@ -123,4 +129,4 @@ struct pair_hash {
     }
 };
 
-#endif //AI_PROJECT_SEARCHALGORITHMBASECLASS_H
+#endif //AI_PROJECT_ABSTRACTSEARCHALGORITHM_H

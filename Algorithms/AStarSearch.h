@@ -5,14 +5,14 @@
 #ifndef AI_PROJECT_ASTARSEARCH_H
 #define AI_PROJECT_ASTARSEARCH_H
 
-#include "SearchAlgorithmBaseClass.h"
+#include "AbstractSearchAlgorithm.h"
 #include "HeuristicSearch.h"
 
-class AStarSearch : public SearchAlgorithmBaseClass, public HeuristicSearch {
+class AStarSearch : public AbstractSearchAlgorithm, public HeuristicSearch {
 private:
 
 
-    AStarSearch() : SearchAlgorithmBaseClass(), HeuristicSearch() {};
+    AStarSearch() : AbstractSearchAlgorithm(), HeuristicSearch() {};
 
     AStarSearch(const AStarSearch &);
 

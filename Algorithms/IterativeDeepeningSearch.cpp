@@ -16,15 +16,19 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 }
 
 
-pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal, int limit) {
+pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal, int limit,float time_limit) {
     bool any_remaining = false;
     int expand_counter, solution_depth;
-    stack<Node *> frontier = stack<Node *>();
-    unordered_map<pair<int, int>, bool, pair_hash> explored = unordered_map<pair<int, int>, bool, pair_hash>();
+    stack < Node * > frontier = stack<Node *>();
+    unordered_map < pair < int, int >, bool, pair_hash > explored = unordered_map < pair < int, int >, bool, pair_hash >
+                                                                                                             ();
     Node *current_node, *node;
     int row = 0, col = 0;
     frontier.push(root);
     while (!frontier.empty()) {
+        setCurrentTime(clock());
+        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit)
+            return {nullptr,false};
         current_node = frontier.top();
         frontier.pop();
         if (*current_node == *goal) {
@@ -119,9 +123,9 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
     Node *root = new Node(0, 0, source[0], source[1], 0);
     root->insertElementToPath(pair<int, int>(source[0], source[1]));
     Node *target = new Node(0, 0, goal[0], goal[1], 0);
-    int max_depth = pow(dimension, 2);
+    int max_depth = std::numeric_limits<int>::max();
     for (int i = 0; i < max_depth; ++i) {
-        auto result = DLS(array, dimension, root, target, i);
+        auto result = DLS(array, dimension, root, target, i,time_limit);
         found = result.first;
         any_remaining = result.second;
         if (found != nullptr) {
@@ -132,6 +136,8 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
             delete found;
             return 0;// return success.
         }
+        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit)
+            return 2; // out of time
         if (!any_remaining) {
             cout << "no nodes left" << endl;
             return 1;

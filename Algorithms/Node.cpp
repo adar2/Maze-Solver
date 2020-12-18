@@ -21,13 +21,13 @@ bool operator==(const Node &node1, const Node &node2) {
 
 bool operator>(const Node &node1, const Node &node2) {
     // tie breaking in favor of the lowest actual cost of the path
-    if(node1.getHeuristicCost() == node2.getHeuristicCost())
+    if (node1.getHeuristicCost() == node2.getHeuristicCost())
         return node1.getActualCost() > node2.getActualCost();
     return node1.getHeuristicCost() > node2.getHeuristicCost();
 }
 
 bool operator<(const Node &node1, const Node &node2) {
-    if(node1.getHeuristicCost() == node2.getHeuristicCost())
+    if (node1.getHeuristicCost() == node2.getHeuristicCost())
         return node1.getActualCost() < node2.getActualCost();
     return node1.getHeuristicCost() < node2.getHeuristicCost();
 }

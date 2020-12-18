@@ -5,6 +5,7 @@
 #include "AStarSearch.h"
 #include <vector>
 #include <set>
+
 using std::multiset;
 using std::vector;
 using std::unordered_map;
@@ -12,26 +13,23 @@ using std::cout;
 using std::endl;
 
 
-
-
 int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
     unordered_map<pair<int, int>, Node, pair_hash> visited = unordered_map<pair<int, int>, Node, pair_hash>();
     multiset<Node> openList = multiset<Node>();
-    Node sourceNode = Node(_heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1])),
-                           0, source[0], source[1], 0);
+    Node current_node;
+    int row = 0, col = 0, expand_counter,f_cost=_heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1])),g_cost=0;
+    Node sourceNode = Node(f_cost,g_cost, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     Node goalNode = Node(0, 0, goal[0], goal[1], 0);
-    Node current_node;
-    int row = 0, col = 0, expand_counter;
     openList.insert(sourceNode);
     while (!openList.empty()) {
-        setCurrentTime(time(nullptr));
+        setCurrentTime(clock());
 //        if (difftime(getCurrentTime(), getStartTime()) >= time_limit)
 //            return 3;//time out
         current_node = *openList.begin();
         openList.erase(openList.begin());
         if (current_node == goalNode) {
-            setCurrentTime(time(nullptr));
+            setCurrentTime(clock());
             double depth = current_node.getPathTilNow().size();
             setExplored(visited.size());
             setDN(depth / getExplored());
@@ -80,13 +78,14 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
                 continue;
             expand_counter++;
-            int g_cost = array[row][col] + current_node.getActualCost();
-            int f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
+            g_cost = array[row][col] + current_node.getActualCost();
+            f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
                                                       pair<int, int>(goalNode.getRow(), goalNode.getCol()));
             Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
             node.setPathTilNow(current_node.getPathTilNow());
             node.insertElementToPath(pair<int, int>(row, col));
-            auto open_list_iterator = std::find(openList.begin(),openList.end(),node);
+            // use std::find as it uses operator== for comparison
+            auto open_list_iterator = std::find(openList.begin(), openList.end(), node);
             auto explored_iterator = visited.find(pair<int, int>(row, col));
             if (explored_iterator == visited.end() && open_list_iterator == openList.end())
                 openList.insert(node);

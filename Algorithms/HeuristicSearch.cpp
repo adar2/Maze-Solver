@@ -4,7 +4,7 @@
 
 #include "HeuristicSearch.h"
 
-void HeuristicSearch::setHeuristicFunction(int (*heuristicFunction)(const pair<int, int>&,const pair<int, int>&)) {
+void HeuristicSearch::setHeuristicFunction(int (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &)) {
     _heuristic_function = heuristicFunction;
 }
 

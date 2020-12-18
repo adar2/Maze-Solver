@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <queue>
+
 #define ACTIONS_SIZE 7
 
 enum actions {

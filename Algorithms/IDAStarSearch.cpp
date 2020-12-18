@@ -19,7 +19,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
     root->insertElementToPath(pair<int, int>(source[0], source[1]));
     Node *target = new Node(0, 0, goal[0], goal[1], 0);
     while (true) {
-        results_tuple = DFS_CONTOUR(array, dimension, root, target, f_limit);
+        results_tuple = DFS_CONTOUR(array, dimension, root, target, f_limit,time_limit);
         found = std::get<0>(results_tuple);
         f_limit = std::get<1>(results_tuple);
         if (found != nullptr) {
@@ -29,9 +29,9 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
             delete target;
             return 0;
         }
-        if (f_limit == std::numeric_limits<int>::max()) {
+        if (f_limit == std::numeric_limits<int>::max() || diff_clock(getCurrentTime(),getStartTime()) >= time_limit) {
 
-            //failed
+            //failed or timeout
             delete root;
             delete target;
             return 1;
@@ -40,13 +40,14 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
 }
 
 std::tuple<Node *, int>
-IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node *goal, int f_limit) {
+IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node *goal, int f_limit,float time_limit) {
     Node *found, *node;
     std::tuple<Node *, int> results_tuple;
     int row = 0, col = 0, new_f = 0, expand_counter = 0;
     int next_f = std::numeric_limits<int>::max();
     int current_node_f = current_node->getHeuristicCost();
-    if (current_node_f > f_limit) return {nullptr, current_node_f};
+    setCurrentTime(clock());
+    if (current_node_f > f_limit || diff_clock(getCurrentTime(),getStartTime()) >= time_limit) return {nullptr, current_node_f};
     if (*current_node == *goal) return {current_node, current_node_f};
     for (int i = 0; i < ACTIONS_SIZE; ++i) {
         switch (actions(i)) {
@@ -92,7 +93,7 @@ IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node 
         node = new Node(f_cost, g_cost, row, col, current_node->getDepth() + 1);
         node->setPathTilNow(current_node->getPathTilNow());
         node->insertElementToPath(pair<int, int>(row, col));
-        results_tuple = DFS_CONTOUR(array, dimension, node, goal, f_limit);
+        results_tuple = DFS_CONTOUR(array, dimension, node, goal, f_limit,time_limit);
         found = std::get<0>(results_tuple);
         new_f = std::get<1>(results_tuple);
         if (found != nullptr) {

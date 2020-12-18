@@ -5,13 +5,13 @@
 #ifndef AI_PROJECT_IDASTARSEARCH_H
 #define AI_PROJECT_IDASTARSEARCH_H
 
-#include "SearchAlgorithmBaseClass.h"
+#include "AbstractSearchAlgorithm.h"
 #include "HeuristicSearch.h"
 #include <tuple>
 
-class IDAStarSearch : public SearchAlgorithmBaseClass, public HeuristicSearch {
+class IDAStarSearch : public AbstractSearchAlgorithm, public HeuristicSearch {
 private:
-    IDAStarSearch() : SearchAlgorithmBaseClass(), HeuristicSearch() {};
+    IDAStarSearch() : AbstractSearchAlgorithm(), HeuristicSearch() {};
 
     IDAStarSearch(const IDAStarSearch &);
 
@@ -20,7 +20,7 @@ private:
 public:
     int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) override;
 
-    std::tuple<Node *, int> DFS_CONTOUR(int **array, int dimension, Node *node, Node *goal, int f_limit);
+    std::tuple<Node *, int> DFS_CONTOUR(int **array, int dimension, Node *node, Node *goal, int f_limit,float time_limit);
 
     static IDAStarSearch &getInstance();
 };

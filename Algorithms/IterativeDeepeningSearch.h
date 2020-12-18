@@ -5,13 +5,13 @@
 #ifndef AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 #define AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 
-#include "SearchAlgorithmBaseClass.h"
+#include "AbstractSearchAlgorithm.h"
 
-class IterativeDeepeningSearch : public SearchAlgorithmBaseClass {
+class IterativeDeepeningSearch : public AbstractSearchAlgorithm {
 private:
-    pair<Node *, bool> DLS(int **array, int dimension, Node *root, Node *goal, int limit);
+    pair<Node *, bool> DLS(int **array, int dimension, Node *root, Node *goal, int limit,float time_limit);
 
-    IterativeDeepeningSearch() : SearchAlgorithmBaseClass() {};
+    IterativeDeepeningSearch() : AbstractSearchAlgorithm() {};
 
     IterativeDeepeningSearch(const IterativeDeepeningSearch &);
 
