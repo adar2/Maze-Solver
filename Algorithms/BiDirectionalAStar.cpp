@@ -20,7 +20,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     Node sourceNode = Node(f_cost, g_cost, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     // the heuristic function is symmetric so source to goal is the same as goal to source
-    Node goalNode = Node(f_cost, 0, goal[0], goal[1], 0);
+    Node goalNode = Node(f_cost, g_cost, goal[0], goal[1], 0);
     goalNode.insertElementToPath(pair<int, int>(goalNode.getRow(), goalNode.getCol()));
     frontier_front.insert(sourceNode);
     frontier_back.insert(goalNode);
@@ -78,7 +78,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                 Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
                 node.setPathTilNow(current_node.getPathTilNow());
                 node.insertElementToPath(pair<int, int>(row, col));
-                // use std::find as it uses operator== for comparison
+                // use std::find as it uses operator== for comparison while set find method uses operator<
                 auto open_list_iterator = std::find(frontier_front.begin(), frontier_front.end(), node);
                 auto explored_iterator = visited_front.find(pair<int, int>(row, col));
                 if (explored_iterator == visited_front.end() && open_list_iterator == frontier_front.end())
@@ -195,6 +195,8 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     std::cout << sol1.getDepth() + sol2.getDepth() -1 << std::endl;
     setExplored(visited_front.size());
     print_path(array, dimension, sol1);
+    std::cout << std::endl;
+    print_path(array, dimension, sol2);
     generate_stats();
 
     return 1;

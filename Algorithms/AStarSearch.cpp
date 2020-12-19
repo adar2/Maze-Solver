@@ -36,6 +36,7 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             setEbf(pow(getExplored(), pow(depth, -1)));
             print_path(array,dimension,current_node);
             generate_stats();
+            std::cout << "solution cost: " << current_node.getActualCost() << std::endl;
             std::cout << "solution depth: " << current_node.getDepth() << std::endl;
             return 0;
         }

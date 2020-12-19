@@ -137,6 +137,25 @@ static void print_path(int **array,int dimension,Node &current_node){
         }
         std::cout << std::endl;
     }
+    for(auto item = path_start+1;item!=path_end;++item){
+        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second-1 )
+            std::cout << "LU" << ',';
+        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second )
+            std::cout << "U" << ',';
+        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second-1 )
+            std::cout << "LD" << ',';
+        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second )
+            std::cout << "D" << ',';
+        if(item->first == (item -1)->first  && item->second == (item -1)->second+1 )
+            std::cout << "R" << ',';
+        if(item->first == (item -1)->first && item->second == (item -1)->second-1 )
+            std::cout << "L" << ',';
+        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second+1 )
+            std::cout << "RD" << ',';
+        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second+1 )
+            std::cout << "RU" << ',';
+    }
+    std::cout << std::endl;
 }
 
 #endif //AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
