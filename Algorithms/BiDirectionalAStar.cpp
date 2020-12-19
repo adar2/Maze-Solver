@@ -102,6 +102,11 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                 getInstance().addCutoffToSum(current_node.getDepth());
             }
         }
+        //check again as it may happen between the forward step to the backward step.
+        if (*frontier_front.begin() == *frontier_back.begin()) {
+            // node v is at the top of both frontier_front and frontier_back
+            break;
+        }
         if (!frontier_back.empty()) {
             current_node = *frontier_back.begin();
             frontier_back.erase(frontier_back.begin());
