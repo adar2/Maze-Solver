@@ -9,7 +9,7 @@
 #include <vector>
 #include <queue>
 
-#define ACTIONS_SIZE 7
+#define ACTIONS_SIZE 8
 
 enum actions {
     RU, R, RD, D, LD, L, LU, U

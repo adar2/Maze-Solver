@@ -36,6 +36,7 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             setEbf(pow(getExplored(), pow(depth, -1)));
             print_path(array,dimension,current_node);
             generate_stats();
+            std::cout << "solution depth: " << current_node.getDepth() << std::endl;
             return 0;
         }
         visited[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
