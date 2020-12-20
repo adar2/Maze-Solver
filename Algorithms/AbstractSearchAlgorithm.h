@@ -16,6 +16,9 @@
 
 class AbstractSearchAlgorithm {
 protected:
+    // true for success false for failure.
+    bool _end_status;
+    std::string _problem_name;
     double _dN;
     double _ebf;
     int _explored;
@@ -27,9 +30,25 @@ protected:
     clock_t _start_time;
     clock_t _current_time{};
 
-    AbstractSearchAlgorithm() : _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(clock()) {}
+    AbstractSearchAlgorithm() :_end_status(false), _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(clock()) {}
 
 public:
+    bool getEndStatus() const {
+        return _end_status;
+    }
+
+    void setEndStatus(bool endStatus) {
+        _end_status = endStatus;
+    }
+
+    const std::string &getProblemName() const {
+        return _problem_name;
+    }
+
+    void setProblemName(const std::string &problemName) {
+        _problem_name = problemName;
+    }
+
     double getDN() const { return _dN; };
 
     void setDN(double dN) { _dN = dN; };
@@ -73,18 +92,45 @@ public:
     }
 
     double diff_clock(clock_t clock1, clock_t clock2) {
-        double diffticks = clock1 - clock2;
-        double diffms = (diffticks) / (CLOCKS_PER_SEC / 1000);
-        return diffms/1000;
+        double diff_ticks = clock1 - clock2;
+        double diff_ms = (diff_ticks) / (CLOCKS_PER_SEC / 1000);
+        return diff_ms / 1000;
     }
 
     virtual int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) = 0;
 
-    virtual void generate_stats() {
-        std::cout << "solution/failure time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
-        std::cout << "d/N : " << getDN() << std::endl;
-        std::cout << "EBF : " << getEbf() << std::endl;
+    virtual void generate_stats(Node &current_node) {
+        std::cout << "Problem : " << getProblemName() << std::endl;
+
         std::cout << "total nodes explored: " << getExplored() << std::endl;
+        if (getEndStatus())
+        {
+            auto path_start = current_node.getPathTilNow().begin();
+            auto path_end = current_node.getPathTilNow().end();
+            for(auto item = path_start+1;item!=path_end;++item){
+                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second-1 )
+                    std::cout << "LU" << '-';
+                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second )
+                    std::cout << "U" << '-';
+                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second-1 )
+                    std::cout << "LD" << '-';
+                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second )
+                    std::cout << "D" << '-';
+                if(item->first == (item -1)->first  && item->second == (item -1)->second+1 )
+                    std::cout << "R" << '-';
+                if(item->first == (item -1)->first && item->second == (item -1)->second-1 )
+                    std::cout << "L" << '-';
+                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second+1 )
+                    std::cout << "RD" << '-';
+                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second+1 )
+                    std::cout << "RU" << '-';
+            }
+            std::cout << " solution cost: " << current_node.getActualCost() ;
+        }else std::cout << "Failed" ;
+        std::cout << std::endl;
+        std::cout << "d/N : " << getDN() << std::endl;
+        std::cout << "time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
+        std::cout << "EBF : " << getEbf() << std::endl;
         std::cout << "Min cutoff : " << getMin() << std::endl;
         std::cout << "Max cutoff : " << getMax() << std::endl;
         std::cout << "Avg cutoff : " << getAvg() << std::endl;

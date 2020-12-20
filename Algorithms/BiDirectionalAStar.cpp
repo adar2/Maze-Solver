@@ -14,12 +14,14 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     multiset<Node> frontier_back = multiset<Node>();
     unordered_map<pair<int, int>, Node, pair_hash> visited_front = unordered_map<pair<int, int>, Node, pair_hash>();
     unordered_map<pair<int, int>, Node, pair_hash> visited_back = unordered_map<pair<int, int>, Node, pair_hash>();
-    Node current_node;
+    Node current_node, sol1, sol2;
     int row = 0, col = 0, expand_counter, f_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
-                                                                       pair<int, int>(goal[0], goal[1])), g_cost = 0;
+                                                                       pair<int, int>(goal[0],
+                                                                                      goal[1])), g_cost = 0, sum = 0, min = 0;
     Node sourceNode = Node(f_cost, g_cost, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     // the heuristic function is symmetric so source to goal is the same as goal to source
+    // init goal node with its cost as we are actually searching for the goal node and we need to consider its wight
     Node goalNode = Node(f_cost, array[goal[0]][goal[1]], goal[0], goal[1], 0);
     goalNode.insertElementToPath(pair<int, int>(goalNode.getRow(), goalNode.getCol()));
     frontier_front.insert(sourceNode);
@@ -182,11 +184,10 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
     }
     // post phase find the optimum cost
-    int min = 0, sum = 0;
-    Node sol1,sol2;
+
     for (const auto &element : frontier_front) {
-        auto found = std::find(frontier_back.begin(),frontier_back.end(),element);
-        if(found != frontier_back.end() ){
+        auto found = std::find(frontier_back.begin(), frontier_back.end(), element);
+        if (found != frontier_back.end()) {
             sum = element.getActualCost() + found->getActualCost();
             if (!min || sum < min) {
                 min = sum;
@@ -196,9 +197,9 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
 
     }
-    for(const auto& item: visited_front){
-        auto found = std::find(visited_back.begin(),visited_back.end(),item);
-        if(found != visited_back.end()){
+    for (const auto &item: visited_front) {
+        auto found = std::find(visited_back.begin(), visited_back.end(), item);
+        if (found != visited_back.end()) {
             sum = item.second.getActualCost() + found->second.getActualCost();
             if (!min || sum < min) {
                 min = sum;
@@ -208,9 +209,9 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
 
     }
-    for(auto node = sol2.getPathTilNow().rbegin() + 1;node != sol2.getPathTilNow().rend();++node){
+    for (auto node = sol2.getPathTilNow().rbegin() + 1; node != sol2.getPathTilNow().rend(); ++node) {
         sol1.insertElementToPath(*node);
-        sol1.setDepth(sol1.getDepth() +1);
+        sol1.setDepth(sol1.getDepth() + 1);
     }
     sol1.setActualCost(sol1.getActualCost() + sol2.getActualCost() - array[sol1.getRow()][sol1.getCol()]);
     std::cout << sol1.getActualCost() << std::endl;
@@ -218,8 +219,6 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     setExplored(visited_front.size() + visited_back.size());
     print_path(array, dimension, sol1);
     std::cout << std::endl;
-//    print_path(array, dimension, sol2);
-//    generate_stats();
 
     return 1;
 }

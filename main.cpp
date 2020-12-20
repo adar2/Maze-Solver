@@ -53,10 +53,10 @@ int main(int argc, char *argv[]) {
 //    IterativeDeepeningSearch::getInstance().run_algorithm(array,d,source,target,20);
 //    AStarSearch::getInstance().setHeuristicFunction(heuristic_function);
 //    AStarSearch::getInstance().run_algorithm(array, d, source, target, 10);
-//    IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
-//    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,1000);
-    BiDirectionalAStar::getInstance().setHeuristicFunction(heuristic_function);
-    BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, 10);
+    IDAStarSearch::getInstance().setHeuristicFunction(heuristic_function);
+    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,1000);
+//    BiDirectionalAStar::getInstance().setHeuristicFunction(heuristic_function);
+//    BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, 10);
     delete[] source;
     delete[] target;
     for (int i = 0; i < d; ++i) {

@@ -17,37 +17,40 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 
 
 pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal, int limit,float time_limit) {
-    bool any_remaining = false;
+    bool any_remaining = false,time_out=false;
     int expand_counter, solution_depth;
     stack < Node * > frontier = stack<Node *>();
-    unordered_map < pair < int, int >, bool, pair_hash > explored = unordered_map < pair < int, int >, bool, pair_hash >
-                                                                                                             ();
+    unordered_map < pair < int, int >, bool, pair_hash > explored = unordered_map < pair < int, int >, bool, pair_hash >();
     Node *current_node, *node;
     int row = 0, col = 0;
     frontier.push(root);
     while (!frontier.empty()) {
         setCurrentTime(clock());
-        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit)
-            return {nullptr,false};
+        time_out = diff_clock(getCurrentTime(),getStartTime()) >= time_limit;
         current_node = frontier.top();
         frontier.pop();
-        if (*current_node == *goal) {
+        if (*current_node == *goal || time_out) {
             // free all the nodes in the stack
             while (!frontier.empty()) {
                 node = frontier.top();
                 frontier.pop();
                 delete node;
             }
-            // update the number of nodes explored in the call goal found.
+            if(time_out){
+                setEndStatus(false);
+                return {nullptr, false};
+            }
+            setEndStatus(true);
             IterativeDeepeningSearch &instance = getInstance();
             solution_depth = current_node->getDepth();
-            instance._explored += explored.size();
             instance.setDN(double(solution_depth) / instance.getExplored());
             instance.setEbf(pow(instance.getExplored(), pow(solution_depth, -1)));
             return {current_node, true};
         }
         if (current_node->getDepth() < limit) {
             expand_counter = 0;
+            //increase the explored counter by one for the current node been expanded
+            getInstance()._explored++;
             explored[pair<int, int>(current_node->getRow(), current_node->getCol())] = true;
             for (int i = ACTIONS_SIZE - 1; i >= 0; --i) {
                 switch (actions(i)) {
@@ -113,7 +116,7 @@ pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Nod
         }
     }
     // maintain the number of nodes explored between function calls
-    getInstance()._explored += explored.size();
+
     return {nullptr, any_remaining};
 }
 
@@ -133,17 +136,14 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
             delete root;
             delete target;
             print_path(array,dimension,*found);
-            generate_stats();
+            generate_stats(*found);
             std::cout << found->getActualCost();
             delete found;
             return 0;// return success.
         }
-        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit)
-            return 2; // out of time
-        if (!any_remaining) {
-            cout << "no nodes left" << endl;
-            return 1;
-        }
+        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit || !any_remaining)
+            //time out or end of search tree reached
+            break;
     }
     delete root;
     delete target;

@@ -23,8 +23,12 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
         found = std::get<0>(results_tuple);
         f_limit = std::get<1>(results_tuple);
         if (found != nullptr) {
+            setEndStatus(true);
+            double depth = found->getPathTilNow().size();
+            setDN(depth / getExplored());
+            setEbf(pow(getExplored(), pow(depth, -1)));
             print_path(array,dimension,*found);
-            generate_stats();
+            generate_stats(*found);
             delete found;
             delete root;
             delete target;
@@ -50,6 +54,7 @@ IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node 
     setCurrentTime(clock());
     if (current_node_f > f_limit || diff_clock(getCurrentTime(),getStartTime()) >= time_limit) return {nullptr, current_node_f};
     if (*current_node == *goal) return {current_node, current_node_f};
+    getInstance()._explored++;
     for (int i = 0; i < ACTIONS_SIZE; ++i) {
         switch (actions(i)) {
             case U:
