@@ -4,7 +4,6 @@
 
 #include "BiDirectionalAStar.h"
 #include <set>
-#include <unordered_map>
 
 using std::multiset;
 using std::unordered_map;
@@ -38,9 +37,17 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     frontier_front.insert(sourceNode);
     frontier_back.insert(goalNode);
     while (!frontier_front.empty() && !frontier_back.empty()) {
+        setCurrentTime(clock());
         //check whether node v is at the top of both frontier_front and frontier_back
         if (*frontier_front.begin() == *frontier_back.begin()) {
+            setEndStatus(true);
             break;
+        }
+        // time out
+        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit){
+            setExplored(frontier_front.size() + frontier_back.size());
+            generate_stats(current_node);
+            return 1;
         }
         if (!frontier_front.empty()) {
             // get the node with the smallest f_cost, tie breaking is done by minimal h(n)
@@ -48,8 +55,9 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             frontier_front.erase(frontier_front.begin());
             // mark that node as visited in the front search
             visited_front[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
-            // expand counter is used to detect cutoffs and recored the for stats.
+            // expand counter is used to detect cutoffs and record the for stats.
             expand_counter = 0;
+            // loop over node actions
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {
                     case U:
@@ -85,6 +93,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                         col = current_node.getCol() - 1;
                         break;
                 }
+                // if its index is out of range or its a wall, represented by -1 in the matrix continue.
                 if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
                     continue;
                 expand_counter++;
@@ -92,22 +101,28 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                 f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
                                                       pair<int, int>(goalNode.getRow(), goalNode.getCol()));
                 Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
+                // copy predecessor path
                 node.setPathTilNow(current_node.getPathTilNow());
+                // insert new node coordinates to the path
                 node.insertElementToPath(pair<int, int>(row, col));
                 // use std::find as it uses operator== for comparison while set find method uses operator<
                 auto open_list_iterator = std::find(frontier_front.begin(), frontier_front.end(), node);
                 auto explored_iterator = visited_front.find(pair<int, int>(row, col));
+                // if the node is not visited and not in the open list, add it to open list.
                 if (explored_iterator == visited_front.end() && open_list_iterator == frontier_front.end())
                     frontier_front.insert(node);
+                // if the node is present in the open list but have a higher f_cost , remove it and insert the better one.
                 else if (open_list_iterator != frontier_front.end() &&
                          open_list_iterator->getHeuristicCost() > node.getHeuristicCost()) {
                     frontier_front.erase(open_list_iterator);
                     frontier_front.insert(node);
+                // if the node has been visited with higher f_cost, remove it from visited and insert it to open list with better f_cost
                 } else if (explored_iterator != visited_front.end() &&
                            explored_iterator->second.getHeuristicCost() > node.getHeuristicCost()) {
                     visited_front.erase(explored_iterator);
                     frontier_front.insert(node);
-                }
+                // if we didnt get into one of the above cond, we didnt expended this node so decrement expend_counter.
+                }else expand_counter--;
             }
             if (!expand_counter) {
                 // cut off occurrence
@@ -119,15 +134,26 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             }
         }
         //check again as it may happen between the forward step to the backward step.
+        //check whether node v is at the top of both frontier_front and frontier_back
         if (*frontier_front.begin() == *frontier_back.begin()) {
-            // node v is at the top of both frontier_front and frontier_back
+            setEndStatus(true);
             break;
         }
+        // time out
+        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit){
+            setExplored(frontier_front.size() + frontier_back.size());
+            generate_stats(current_node);
+            return 1;
+        }
         if (!frontier_back.empty()) {
+            // get the node with the smallest f_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_back.begin();
             frontier_back.erase(frontier_back.begin());
+            // mark that node as visited in the front search
             visited_back[pair<int, int>(current_node.getRow(), current_node.getCol())] = current_node;
+            // expand counter is used to detect cutoffs and record the for stats.
             expand_counter = 0;
+            // loop over node actions
             for (int i = 0; i < ACTIONS_SIZE; ++i) {
                 switch (actions(i)) {
                     case U:
@@ -163,6 +189,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                         col = current_node.getCol() - 1;
                         break;
                 }
+                // if its index is out of range or its a wall, represented by -1 in the matrix continue.
                 if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
                     continue;
                 expand_counter++;
@@ -170,22 +197,32 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
                 f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
                                                       pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
                 Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
+                // copy predecessor path
                 node.setPathTilNow(current_node.getPathTilNow());
+                // insert new node coordinates to the path
                 node.insertElementToPath(pair<int, int>(row, col));
                 // use std::find as it uses operator== for comparison
                 auto open_list_iterator = std::find(frontier_back.begin(), frontier_back.end(), node);
                 auto explored_iterator = visited_back.find(pair<int, int>(row, col));
+                // if the node is not visited and not in the open list, add it to open list.
                 if (explored_iterator == visited_back.end() && open_list_iterator == frontier_back.end())
                     frontier_back.insert(node);
+                // if the node is present in the open list but have a higher f_cost , remove it and insert the better one.
                 else if (open_list_iterator != frontier_back.end() &&
                          open_list_iterator->getHeuristicCost() > node.getHeuristicCost()) {
                     frontier_back.erase(open_list_iterator);
                     frontier_back.insert(node);
-                } else if (explored_iterator != visited_back.end() &&
+
+                }
+                // if the node has been visited with higher f_cost, remove it from visited and insert it to open list with better f_cost
+                else if (explored_iterator != visited_back.end() &&
                            explored_iterator->second.getHeuristicCost() > node.getHeuristicCost()) {
                     visited_back.erase(explored_iterator);
                     frontier_back.insert(node);
+
                 }
+                // if we didnt get into one of the above cond, we didnt expended this node so decrement expend_counter.
+                else expand_counter--;
             }
             if (!expand_counter) {
                 // cut off occurrence
@@ -228,11 +265,14 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         sol1.setDepth(sol1.getDepth() + 1);
     }
     sol1.setActualCost(sol1.getActualCost() + sol2.getActualCost() - array[sol1.getRow()][sol1.getCol()]);
+    setExplored(visited_front.size() + visited_back.size());
+    double sol_depth = sol1.getPathTilNow().size();
+    setDN(sol_depth/getExplored());
     std::cout << sol1.getActualCost() << std::endl;
     std::cout << sol1.getDepth() << std::endl;
-    setExplored(visited_front.size() + visited_back.size());
     print_path(array, dimension, sol1);
     std::cout << std::endl;
+    generate_stats(sol1);
 
     return 1;
 }
