@@ -24,7 +24,7 @@ bool operator>(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
     if (node1.getHeuristicCost() == node2.getHeuristicCost())
-        return (node1.getHeuristicCost()-node1.getActualCost()) > (node2.getHeuristicCost() - node2.getActualCost());
+        return (node1.getHeuristicCost() - node1.getActualCost()) > (node2.getHeuristicCost() - node2.getActualCost());
     return node1.getHeuristicCost() > node2.getHeuristicCost();
 }
 
@@ -32,7 +32,7 @@ bool operator<(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
     if (node1.getHeuristicCost() == node2.getHeuristicCost())
-        return (node1.getHeuristicCost()-node1.getActualCost()) < (node2.getHeuristicCost() - node2.getActualCost());
+        return (node1.getHeuristicCost() - node1.getActualCost()) < (node2.getHeuristicCost() - node2.getActualCost());
     return node1.getHeuristicCost() < node2.getHeuristicCost();
 }
 

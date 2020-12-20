@@ -18,8 +18,9 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
     multiset<Node> openList = multiset<Node>();
     Node current_node;
     bool time_out = false;
-    int row = 0, col = 0, expand_counter,f_cost=_heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1])),g_cost=0;
-    Node sourceNode = Node(f_cost,g_cost, source[0], source[1], 0);
+    int row = 0, col = 0, expand_counter, f_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
+                                                                       pair<int, int>(goal[0], goal[1])), g_cost = 0;
+    Node sourceNode = Node(f_cost, g_cost, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     Node goalNode = Node(0, 0, goal[0], goal[1], 0);
     openList.insert(sourceNode);
@@ -27,18 +28,18 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
         setCurrentTime(clock());
         current_node = *openList.begin();
         openList.erase(openList.begin());
-        time_out = diff_clock(getCurrentTime(),getStartTime()) >= time_limit;
+        time_out = diff_clock(getCurrentTime(), getStartTime()) >= time_limit;
         if (current_node == goalNode || time_out) {
             setExplored(visited.size());
-            if(time_out){
+            if (time_out) {
                 setEndStatus(false);
-            }else{
+            } else {
                 setEndStatus(true);
                 double depth = current_node.getPathTilNow().size();
                 setDN(depth / getExplored());
                 setEbf(pow(getExplored(), pow(depth, -1)));
             }
-            print_path(array,dimension,current_node);
+            print_path(array, dimension, current_node);
             generate_stats(current_node);
             std::cout << "solution cost: " << current_node.getActualCost() << std::endl;
             std::cout << "solution depth: " << current_node.getDepth() << std::endl;
@@ -87,7 +88,7 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             expand_counter++;
             g_cost = array[row][col] + current_node.getActualCost();
             f_cost = g_cost + _heuristic_function(pair<int, int>(row, col),
-                                                      pair<int, int>(goalNode.getRow(), goalNode.getCol()));
+                                                  pair<int, int>(goalNode.getRow(), goalNode.getCol()));
             Node node = Node(f_cost, g_cost, row, col, current_node.getDepth() + 1);
             node.setPathTilNow(current_node.getPathTilNow());
             node.insertElementToPath(pair<int, int>(row, col));
@@ -104,7 +105,7 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
                        explored_iterator->second.getHeuristicCost() > node.getHeuristicCost()) {
                 visited.erase(explored_iterator);
                 openList.insert(node);
-            }else expand_counter--;
+            } else expand_counter--;
 
         }
         if (!expand_counter) {

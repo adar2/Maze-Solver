@@ -30,7 +30,8 @@ protected:
     clock_t _start_time;
     clock_t _current_time{};
 
-    AbstractSearchAlgorithm() :_end_status(false), _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _start_time(clock()) {}
+    AbstractSearchAlgorithm() : _end_status(false), _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0),
+                                _start_time(clock()) {}
 
 public:
     bool getEndStatus() const {
@@ -103,30 +104,29 @@ public:
         std::cout << "Problem : " << getProblemName() << std::endl;
 
         std::cout << "total nodes explored: " << getExplored() << std::endl;
-        if (getEndStatus())
-        {
+        if (getEndStatus()) {
             auto path_start = current_node.getPathTilNow().begin();
             auto path_end = current_node.getPathTilNow().end();
-            for(auto item = path_start+1;item!=path_end;++item){
-                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second-1 )
+            for (auto item = path_start + 1; item != path_end; ++item) {
+                if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second - 1)
                     std::cout << "LU" << '-';
-                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second )
+                if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second)
                     std::cout << "U" << '-';
-                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second-1 )
+                if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second - 1)
                     std::cout << "LD" << '-';
-                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second )
+                if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second)
                     std::cout << "D" << '-';
-                if(item->first == (item -1)->first  && item->second == (item -1)->second+1 )
+                if (item->first == (item - 1)->first && item->second == (item - 1)->second + 1)
                     std::cout << "R" << '-';
-                if(item->first == (item -1)->first && item->second == (item -1)->second-1 )
+                if (item->first == (item - 1)->first && item->second == (item - 1)->second - 1)
                     std::cout << "L" << '-';
-                if(item->first == (item -1)->first + 1 && item->second == (item -1)->second+1 )
+                if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second + 1)
                     std::cout << "RD" << '-';
-                if(item->first == (item -1)->first - 1 && item->second == (item -1)->second+1 )
+                if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second + 1)
                     std::cout << "RU" << '-';
             }
-            std::cout << " solution cost: " << current_node.getActualCost() ;
-        }else std::cout << "Failed" ;
+            std::cout << " solution cost: " << current_node.getActualCost();
+        } else std::cout << "Failed";
         std::cout << std::endl;
         std::cout << "d/N : " << getDN() << std::endl;
         std::cout << "time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
@@ -168,37 +168,36 @@ struct pair_hash {
         return hash_val(p.first, p.second);
     }
 };
+
 // for debugging purposes
-static void print_path(int **array,int dimension,Node &current_node){
+static void print_path(int **array, int dimension, Node &current_node) {
     auto path_start = current_node.getPathTilNow().begin();
     auto path_end = current_node.getPathTilNow().end();
     for (int i = 0; i < dimension; ++i) {
         for (int j = 0; j < dimension; ++j) {
-            if (std::find(path_start,path_end,pair<int,int>(i,j)) != path_end){
+            if (std::find(path_start, path_end, pair<int, int>(i, j)) != path_end) {
                 std::cout << "\033[1;31m" << '(' << array[i][j] << "), " << "\033[0m";
-            }
-
-            else
+            } else
                 std::cout << '(' << array[i][j] << "), ";
         }
         std::cout << std::endl;
     }
-    for(auto item = path_start+1;item!=path_end;++item){
-        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second-1 )
+    for (auto item = path_start + 1; item != path_end; ++item) {
+        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second - 1)
             std::cout << "LU" << ',';
-        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second )
+        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second)
             std::cout << "U" << ',';
-        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second-1 )
+        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second - 1)
             std::cout << "LD" << ',';
-        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second )
+        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second)
             std::cout << "D" << ',';
-        if(item->first == (item -1)->first  && item->second == (item -1)->second+1 )
+        if (item->first == (item - 1)->first && item->second == (item - 1)->second + 1)
             std::cout << "R" << ',';
-        if(item->first == (item -1)->first && item->second == (item -1)->second-1 )
+        if (item->first == (item - 1)->first && item->second == (item - 1)->second - 1)
             std::cout << "L" << ',';
-        if(item->first == (item -1)->first + 1 && item->second == (item -1)->second+1 )
+        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second + 1)
             std::cout << "RD" << ',';
-        if(item->first == (item -1)->first - 1 && item->second == (item -1)->second+1 )
+        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second + 1)
             std::cout << "RU" << ',';
     }
     std::cout << std::endl;

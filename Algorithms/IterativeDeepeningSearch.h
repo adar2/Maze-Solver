@@ -9,7 +9,7 @@
 
 class IterativeDeepeningSearch : public AbstractSearchAlgorithm {
 private:
-    pair<Node *, bool> DLS(int **array, int dimension, Node *root, Node *goal, int limit,float time_limit);
+    pair<Node *, bool> DLS(int **array, int dimension, Node *root, Node *goal, int limit, float time_limit);
 
     IterativeDeepeningSearch() : AbstractSearchAlgorithm() {};
 

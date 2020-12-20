@@ -20,7 +20,8 @@ private:
 public:
     int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) override;
 
-    std::tuple<Node *, int> DFS_CONTOUR(int **array, int dimension, Node *node, Node *goal, int f_limit,float time_limit);
+    std::tuple<Node *, int>
+    DFS_CONTOUR(int **array, int dimension, Node *node, Node *goal, int f_limit, float time_limit);
 
     static IDAStarSearch &getInstance();
 };

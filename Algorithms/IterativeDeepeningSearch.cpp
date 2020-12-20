@@ -16,17 +16,18 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 }
 
 
-pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal, int limit,float time_limit) {
-    bool any_remaining = false,time_out=false;
+pair<Node *, bool>
+IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal, int limit, float time_limit) {
+    bool any_remaining = false, time_out = false;
     int expand_counter, solution_depth;
-    stack < Node * > frontier = stack<Node *>();
-    unordered_map < pair < int, int >, bool, pair_hash > explored = unordered_map < pair < int, int >, bool, pair_hash >();
+    stack<Node *> frontier = stack<Node *>();
+    unordered_map<pair<int, int>, bool, pair_hash> explored = unordered_map<pair<int, int>, bool, pair_hash>();
     Node *current_node, *node;
     int row = 0, col = 0;
     frontier.push(root);
     while (!frontier.empty()) {
         setCurrentTime(clock());
-        time_out = diff_clock(getCurrentTime(),getStartTime()) >= time_limit;
+        time_out = diff_clock(getCurrentTime(), getStartTime()) >= time_limit;
         current_node = frontier.top();
         frontier.pop();
         if (*current_node == *goal || time_out) {
@@ -36,7 +37,7 @@ pair<Node *, bool> IterativeDeepeningSearch::DLS(int **array, int dimension, Nod
                 frontier.pop();
                 delete node;
             }
-            if(time_out){
+            if (time_out) {
                 setEndStatus(false);
                 return {nullptr, false};
             }
@@ -128,20 +129,20 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
     Node *target = new Node(0, 0, goal[0], goal[1], 0);
     int max_depth = std::numeric_limits<int>::max();
     for (int i = 0; i < max_depth; ++i) {
-        auto result = DLS(array, dimension, root, target, i,time_limit);
+        auto result = DLS(array, dimension, root, target, i, time_limit);
         found = result.first;
         any_remaining = result.second;
         if (found != nullptr) {
             // found the node
             delete root;
             delete target;
-            print_path(array,dimension,*found);
+            print_path(array, dimension, *found);
             generate_stats(*found);
             std::cout << found->getActualCost();
             delete found;
             return 0;// return success.
         }
-        if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit || !any_remaining)
+        if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining)
             //time out or end of search tree reached
             break;
     }
