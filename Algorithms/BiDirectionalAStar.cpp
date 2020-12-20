@@ -20,7 +20,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     Node sourceNode = Node(f_cost, g_cost, source[0], source[1], 0);
     sourceNode.insertElementToPath(pair<int, int>(sourceNode.getRow(), sourceNode.getCol()));
     // the heuristic function is symmetric so source to goal is the same as goal to source
-    Node goalNode = Node(f_cost, g_cost, goal[0], goal[1], 0);
+    Node goalNode = Node(f_cost, array[goal[0]][goal[1]], goal[0], goal[1], 0);
     goalNode.insertElementToPath(pair<int, int>(goalNode.getRow(), goalNode.getCol()));
     frontier_front.insert(sourceNode);
     frontier_back.insert(goalNode);
@@ -196,13 +196,30 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
 
     }
-    std::cout << min << std::endl;
-    std::cout << sol1.getDepth() + sol2.getDepth() -1 << std::endl;
-    setExplored(visited_front.size());
+    for(const auto& item: visited_front){
+        auto found = std::find(visited_back.begin(),visited_back.end(),item);
+        if(found != visited_back.end()){
+            sum = item.second.getActualCost() + found->second.getActualCost();
+            if (!min || sum < min) {
+                min = sum;
+                sol1 = item.second;
+                sol2 = (*found).second;
+            }
+        }
+
+    }
+    for(auto node = sol2.getPathTilNow().rbegin() + 1;node != sol2.getPathTilNow().rend();++node){
+        sol1.insertElementToPath(*node);
+        sol1.setDepth(sol1.getDepth() +1);
+    }
+    sol1.setActualCost(sol1.getActualCost() + sol2.getActualCost() - array[sol1.getRow()][sol1.getCol()]);
+    std::cout << sol1.getActualCost() << std::endl;
+    std::cout << sol1.getDepth() << std::endl;
+    setExplored(visited_front.size() + visited_back.size());
     print_path(array, dimension, sol1);
     std::cout << std::endl;
-    print_path(array, dimension, sol2);
-    generate_stats();
+//    print_path(array, dimension, sol2);
+//    generate_stats();
 
     return 1;
 }
