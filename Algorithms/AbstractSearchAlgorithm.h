@@ -134,6 +134,7 @@ public:
         std::cout << "Min cutoff : " << getMin() << std::endl;
         std::cout << "Max cutoff : " << getMax() << std::endl;
         std::cout << "Avg cutoff : " << getAvg() << std::endl;
+        std::cout << std::endl;
     };
 };
 

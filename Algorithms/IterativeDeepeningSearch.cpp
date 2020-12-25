@@ -38,7 +38,6 @@ IterativeDeepeningSearch::DLS(int **array, int dimension, Node *root, Node *goal
                 delete node;
             }
             if (time_out) {
-                setEndStatus(false);
                 return {nullptr, false};
             }
             setEndStatus(true);
@@ -136,15 +135,17 @@ int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *sou
             // found the node
             delete root;
             delete target;
-            print_path(array, dimension, *found);
+//            print_path(array, dimension, *found);
             generate_stats(*found);
-            std::cout << found->getActualCost();
             delete found;
             return 0;// return success.
         }
-        if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining)
+        if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining){
             //time out or end of search tree reached
+            generate_stats(*root);
             break;
+
+        }
     }
     delete root;
     delete target;

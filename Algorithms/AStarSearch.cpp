@@ -43,18 +43,14 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
         // if goal node reached or time out stop the search
         if (current_node == goalNode || time_out) {
             setExplored(visited.size());
-            if (time_out) {
-                setEndStatus(false);
-            } else {
+            if (!time_out) {
                 setEndStatus(true);
                 double depth = current_node.getPathTilNow().size();
                 setDN(depth / getExplored());
                 setEbf(pow(getExplored(), pow(depth, -1)));
             }
-            print_path(array, dimension, current_node);
+//            print_path(array, dimension, current_node);
             generate_stats(current_node);
-            std::cout << "solution cost: " << current_node.getActualCost() << std::endl;
-            std::cout << "solution depth: " << current_node.getDepth() << std::endl;
             return 0;
         }
         // mark current node as visited
@@ -140,7 +136,9 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             getInstance().addCutoffToSum(current_node.getDepth());
         }
     }
-    setEndStatus(false);
+    // no solution found
+    setExplored(visited.size());
+    generate_stats(current_node);
     return 1;
 }
 

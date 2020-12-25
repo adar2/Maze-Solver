@@ -234,7 +234,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             }
         }
     }
-    // post phase find the optimum cost
+    // post phase find the optimal cost
 
     for (const auto &element : frontier_front) {
         auto found = std::find(frontier_back.begin(), frontier_back.end(), element);
@@ -260,6 +260,8 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
 
     }
+    if(sol2.getPathTilNow().rbegin() == sol2.getPathTilNow().rend())
+        std::cout << "yeah";
     for (auto node = sol2.getPathTilNow().rbegin() + 1; node != sol2.getPathTilNow().rend(); ++node) {
         sol1.insertElementToPath(*node);
         sol1.setDepth(sol1.getDepth() + 1);
@@ -268,9 +270,9 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     setExplored(visited_front.size() + visited_back.size());
     double sol_depth = sol1.getPathTilNow().size();
     setDN(sol_depth/getExplored());
-    std::cout << sol1.getActualCost() << std::endl;
-    std::cout << sol1.getDepth() << std::endl;
-    print_path(array, dimension, sol1);
+//    std::cout << sol1.getActualCost() << std::endl;
+//    std::cout << sol1.getDepth() << std::endl;
+//    print_path(array, dimension, sol1);
     std::cout << std::endl;
     generate_stats(sol1);
 

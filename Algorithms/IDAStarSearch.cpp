@@ -27,7 +27,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
             double depth = found->getPathTilNow().size();
             setDN(depth / getExplored());
             setEbf(pow(getExplored(), pow(depth, -1)));
-            print_path(array, dimension, *found);
+//            print_path(array, dimension, *found);
             generate_stats(*found);
             delete found;
             delete root;
@@ -35,7 +35,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
             return 0;
         }
         if (f_limit == std::numeric_limits<int>::max() || diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
-
+            generate_stats(*root);
             //failed or timeout
             delete root;
             delete target;
@@ -48,7 +48,7 @@ std::tuple<Node *, int>
 IDAStarSearch::DFS_CONTOUR(int **array, int dimension, Node *current_node, Node *goal, int f_limit, float time_limit) {
     Node *found, *node;
     std::tuple<Node *, int> results_tuple;
-    int row = 0, col = 0, new_f = 0, expand_counter = 0, g_cost, f_cost;
+    int row = 0, col = 0, new_f, expand_counter = 0, g_cost, f_cost;
     int next_f = std::numeric_limits<int>::max();
     int current_node_f = current_node->getHeuristicCost();
     setCurrentTime(clock());
