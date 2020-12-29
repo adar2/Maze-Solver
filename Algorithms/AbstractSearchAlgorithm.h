@@ -18,13 +18,21 @@ class AbstractSearchAlgorithm {
 protected:
     // true for success false for failure.
     bool _end_status;
+    // file name of the maze
     std::string _problem_name;
+    // depth divided by number of nodes explored
     double _dN;
+    // effective branching factor
     double _ebf;
+    // total number of nodes explored bu the algorithm
     int _explored;
+    // min depth cutoff
     double _min;
+    // avg depth cutoff
     double _avg;
+    // max depth cutoff
     double _max;
+    // total cutoff
     double _no_of_cutoffs{};
     double _sum_of_cutoffs_depths{};
     clock_t _start_time;

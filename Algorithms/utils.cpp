@@ -13,27 +13,29 @@
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
 
+#define TIME_LIMIT 20
 
-int zero_function(const pair<int, int>&, const pair<int, int>&){
+
+int zero_function(const pair<int, int> &, const pair<int, int> &) {
     return 0;
 }
 
-int euclidean_distance(const pair<int, int> &p1, const pair<int, int> &p2)
-{
+int euclidean_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
     return sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2));
 }
 
-int manhattan_distance(const pair<int, int> &p1, const pair<int, int> &p2)
-{
+int manhattan_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
     return abs(p1.first - p2.first) + abs(p1.second - p2.second);
 }
 
-void parse_file(char* file_name){
+void parse_file(char *file_name) {
     std::string algorithm_name, dimension, sourceStr, targetStr;
     auto *source = new int[2];
     auto *target = new int[2];
     std::ifstream inputFile(file_name);
     getline(inputFile, algorithm_name, '\n');
+    // remove carriage return from algorithm name string.
+    algorithm_name.erase(algorithm_name.size() - 1);
     getline(inputFile, dimension, '\n');
     getline(inputFile, sourceStr, '\n');
     getline(inputFile, targetStr, '\n');
@@ -59,17 +61,36 @@ void parse_file(char* file_name){
             tmpStr.erase(0, pos + 1);
         }
     }
-//    IterativeDeepeningSearch::getInstance().setProblemName(file_name);
-//    IterativeDeepeningSearch::getInstance().run_algorithm(array,d,source,target,20);
-//    AStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
-//    AStarSearch::getInstance().setProblemName(file_name);
-//    AStarSearch::getInstance().run_algorithm(array, d, source, target, 20);
-    IDAStarSearch::getInstance().setProblemName(file_name);
-    IDAStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
-    IDAStarSearch::getInstance().run_algorithm(array,d,source,target,20);
-//    BiDirectionalAStar::getInstance().setProblemName(file_name);
-//    BiDirectionalAStar::getInstance().setHeuristicFunction(manhattan_distance);
-//    BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, 20);
+    if(source[0] < 0 || source[0] >= d || source[1] < 0 || source[1] >= d || array[source[0]][source[1]] < 0 ||target[0] < 0 || target[0] >= d || target[1] < 0 || target[1] >= d || array[target[0]][target[1]] < 0 ){
+        delete[] source;
+        delete[] target;
+        for (int i = 0; i < d; ++i) {
+            delete[] array[i];
+        }
+        delete[] array;
+        std::cout << "Illegal input , exiting.." << std::endl;
+        return;
+    }
+    if (algorithm_name == "BIASTAR") {
+        BiDirectionalAStar::getInstance().setProblemName(file_name);
+        BiDirectionalAStar::getInstance().setHeuristicFunction(manhattan_distance);
+        BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+    } else if (algorithm_name == "IDASTAR") {
+        IDAStarSearch::getInstance().setProblemName(file_name);
+        IDAStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
+        IDAStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+    } else if (algorithm_name == "ASTAR") {
+        AStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
+        AStarSearch::getInstance().setProblemName(file_name);
+        AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+    } else if (algorithm_name == "UCS") {
+
+    } else if (algorithm_name == "IDS") {
+        IterativeDeepeningSearch::getInstance().setProblemName(file_name);
+        IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+    } else {
+        std::cout << "unknown algorithm, exiting.." << std::endl;
+    }
     delete[] source;
     delete[] target;
     for (int i = 0; i < d; ++i) {
