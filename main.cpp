@@ -11,8 +11,5 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
     parse_file(argv[1]);
-
-
-
     return 0;
 }

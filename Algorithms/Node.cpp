@@ -72,3 +72,56 @@ void Node::setActualCost(int actualCost) {
     _actual_cost = actualCost;
 }
 
+shared_ptr<vector<shared_ptr<Node>>> Node::successors(int **array,const int& dimension) {
+    int row=0,col=0,g_cost;
+    Node& current_node = *this;
+    shared_ptr<vector<shared_ptr<Node>>> successors (new vector<shared_ptr<Node>>());
+    for (int i = 0; i < ACTIONS_SIZE; ++i) {
+        switch (actions(i)) {
+            case U:
+                row = current_node.getRow() - 1;
+                col = current_node.getCol();
+                break;
+            case RU:
+                row = current_node.getRow() - 1;
+                col = current_node.getCol() + 1;
+                break;
+            case R:
+                row = current_node.getRow();
+                col = current_node.getCol() + 1;
+                break;
+            case RD:
+                row = current_node.getRow() + 1;
+                col = current_node.getCol() + 1;
+                break;
+            case D:
+                row = current_node.getRow() + 1;
+                col = current_node.getCol();
+                break;
+            case LD:
+                row = current_node.getRow() + 1;
+                col = current_node.getCol() - 1;
+                break;
+            case L:
+                row = current_node.getRow();
+                col = current_node.getCol() - 1;
+                break;
+            case LU:
+                row = current_node.getRow() - 1;
+                col = current_node.getCol() - 1;
+                break;
+        }
+        // if its index is out of range or its a wall, represented by -1 in the matrix continue.
+        if (row < 0 || row >= dimension || col < 0 || col >= dimension || array[row][col] < 0)
+            continue;
+        g_cost = array[row][col] + current_node.getActualCost();
+        shared_ptr<Node> successor(new Node(g_cost, g_cost, row, col, current_node.getDepth() + 1));
+        // copy predecessor path
+        successor->setPathTilNow(current_node.getPathTilNow());
+        // insert new node coordinates to the path
+        successor->insertElementToPath(pair<int, int>(row, col));
+        successors->push_back(successor);
+    }
+    return successors;
+}
+

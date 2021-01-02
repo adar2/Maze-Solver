@@ -84,7 +84,9 @@ void parse_file(char *file_name) {
         AStarSearch::getInstance().setProblemName(file_name);
         AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
     } else if (algorithm_name == "UCS") {
-
+        AStarSearch::getInstance().setHeuristicFunction(zero_function);
+        AStarSearch::getInstance().setProblemName(file_name);
+        AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
     } else if (algorithm_name == "IDS") {
         IterativeDeepeningSearch::getInstance().setProblemName(file_name);
         IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
