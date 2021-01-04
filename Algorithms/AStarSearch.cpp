@@ -90,11 +90,7 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
         }
         if (!expand_counter) {
             // cut off occurrence
-            if (getInstance().getMin() == 0 || getInstance().getMin() > current_node->getDepth())
-                getInstance().setMin(current_node->getDepth());
-            if (getInstance().getMax() == 0 || getInstance().getMax() < current_node->getDepth())
-                getInstance().setMax(current_node->getDepth());
-            getInstance().addCutoffToSum(current_node->getDepth());
+            update_cutoffs(current_node->getDepth());
         }
     }
     // no solution found

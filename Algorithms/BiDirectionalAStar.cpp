@@ -86,11 +86,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             }
             if (!expand_counter) {
                 // cut off occurrence
-                if (getInstance().getMin() == 0 || getInstance().getMin() > current_node->getDepth())
-                    getInstance().setMin(current_node->getDepth());
-                if (getInstance().getMax() == 0 || getInstance().getMax() < current_node->getDepth())
-                    getInstance().setMax(current_node->getDepth());
-                getInstance().addCutoffToSum(current_node->getDepth());
+                update_cutoffs(current_node->getDepth());
             }
         }
         //check again as it may happen between the forward step to the backward step.
@@ -145,54 +141,55 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
             }
             if (!expand_counter) {
                 // cut off occurrence
-                if (getInstance().getMin() == 0 || getInstance().getMin() > current_node->getDepth())
-                    getInstance().setMin(current_node->getDepth());
-                if (getInstance().getMax() == 0 || getInstance().getMax() < current_node->getDepth())
-                    getInstance().setMax(current_node->getDepth());
-                getInstance().addCutoffToSum(current_node->getDepth());
+                update_cutoffs(current_node->getDepth());
             }
         }
     }
     // post search phase find the optimal cost
-
-    for (const auto &element : frontier_front) {
-        auto found = std::find_if(frontier_back.begin(), frontier_back.end(), [&element](const shared_ptr<Node>& node){return *node == *element;});
-        if (found != frontier_back.end()) {
-            sum = element->getActualCost() + (*found)->getActualCost();
-            if (!min || sum < min) {
-                min = sum;
-                sol1 = element;
-                sol2 = (*found);
-            }
-        }
-
-    }
-    for (const auto &element: visited_front) {
-        auto found = std::find_if(visited_back.begin(), visited_back.end(), [&element](const pair<pair<int, int>, shared_ptr<Node>>& pair){return *element.second == *pair.second;});
-        if (found != visited_back.end()) {
-            sum = element.second->getActualCost() + found->second->getActualCost();
-            if (!min || sum < min) {
-                min = sum;
-                sol1 = element.second;
-                sol2 = (*found).second;
-            }
-        }
-
-    }
-    if(sol2->getPathTilNow().rbegin() == sol2->getPathTilNow().rend())
-        std::cout << "yeah";
-    for ( auto node = sol2->getPathTilNow().rbegin() + 1; node != sol2->getPathTilNow().rend(); ++node) {
-        sol1->insertElementToPath(*node);
-        sol1->setDepth(sol1->getDepth() + 1);
-    }
-    sol1->setActualCost(sol1->getActualCost() + sol2->getActualCost() - array[sol1->getRow()][sol1->getCol()]);
     setExplored(visited_front.size() + visited_back.size());
-    double sol_depth = sol1->getPathTilNow().size();
-    setDN(sol_depth/getExplored());
-    calcEbf(sol_depth);
-    print_path(array, dimension, *sol1);
-    std::cout << std::endl;
-    generate_stats(*sol1);
+    if(getEndStatus()) {
+        for (const auto &element : frontier_front) {
+            auto found = std::find_if(frontier_back.begin(), frontier_back.end(),
+                                      [&element](const shared_ptr<Node> &node) { return *node == *element; });
+            if (found != frontier_back.end()) {
+                sum = element->getActualCost() + (*found)->getActualCost();
+                if (!min || sum < min) {
+                    min = sum;
+                    sol1 = element;
+                    sol2 = (*found);
+                }
+            }
+
+        }
+        for (const auto &element: visited_front) {
+            auto found = std::find_if(visited_back.begin(), visited_back.end(),
+                                      [&element](const pair<pair<int, int>, shared_ptr<Node>> &pair) {
+                                          return *element.second == *pair.second;
+                                      });
+            if (found != visited_back.end()) {
+                sum = element.second->getActualCost() + found->second->getActualCost();
+                if (!min || sum < min) {
+                    min = sum;
+                    sol1 = element.second;
+                    sol2 = (*found).second;
+                }
+            }
+
+        }
+        for (auto node = sol2->getPathTilNow().rbegin() + 1; node != sol2->getPathTilNow().rend(); ++node) {
+            sol1->insertElementToPath(*node);
+            sol1->setDepth(sol1->getDepth() + 1);
+        }
+        sol1->setActualCost(sol1->getActualCost() + sol2->getActualCost() - array[sol1->getRow()][sol1->getCol()]);
+        double sol_depth = sol1->getPathTilNow().size();
+        setDN(sol_depth/getExplored());
+        calcEbf(sol_depth);
+        print_path(array, dimension, *sol1);
+        std::cout << std::endl;
+        generate_stats(*sol1);
+        return 0;
+    }
+    generate_stats(*sourceNode);
 
     return 1;
 }

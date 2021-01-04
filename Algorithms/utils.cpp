@@ -7,7 +7,7 @@
 #include <cstring>
 #include <algorithm>
 #include "utils.h"
-#include "SearchAlgorithms.h"
+#include "UniformCostSearch.h"
 #include "IterativeDeepeningSearch.h"
 #include "AStarSearch.h"
 #include "IDAStarSearch.h"
@@ -84,9 +84,8 @@ void parse_file(char *file_name) {
         AStarSearch::getInstance().setProblemName(file_name);
         AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
     } else if (algorithm_name == "UCS") {
-        AStarSearch::getInstance().setHeuristicFunction(zero_function);
-        AStarSearch::getInstance().setProblemName(file_name);
-        AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+        UniformCostSearch::getInstance().setProblemName(file_name);
+        UniformCostSearch::getInstance().run_algorithm(array,d,source,target,TIME_LIMIT);
     } else if (algorithm_name == "IDS") {
         IterativeDeepeningSearch::getInstance().setProblemName(file_name);
         IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
