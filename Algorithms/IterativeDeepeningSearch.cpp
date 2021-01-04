@@ -19,7 +19,6 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 pair<shared_ptr<Node>, bool>
 IterativeDeepeningSearch::DLS(int **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit) {
     bool any_remaining = false, time_out;
-    int solution_depth;
     shared_ptr<vector<shared_ptr<Node>>> successors;
     stack<shared_ptr<Node>> frontier = stack<shared_ptr<Node>>();
     unordered_map<pair<int, int>, bool, pair_hash> explored = unordered_map<pair<int, int>, bool, pair_hash>();
@@ -35,9 +34,6 @@ IterativeDeepeningSearch::DLS(int **array, int dimension,const shared_ptr<Node>&
                 return {nullptr, false};
             }
             setEndStatus(true);
-            solution_depth = current_node->getDepth();
-            setDN(double(solution_depth) / getExplored());
-            calcEBF(solution_depth);
             return {current_node, true};
         }
         if (current_node->getDepth() < limit) {

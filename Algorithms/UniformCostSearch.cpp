@@ -41,11 +41,8 @@ int UniformCostSearch::run_algorithm(int **array, int dimension, int *source, in
         if (*current_node == *goalNode || time_out) {
             setExplored(visited.size());
             if(!time_out){
-                setEndStatus(true);
-                int depth = current_node->getPathTilNow().size();
-                setDN(double(depth) / getExplored());
-                calcEBF(depth);
                 // reached to goal state
+                setEndStatus(true);
             }
             generate_stats(*current_node);
             return 0;

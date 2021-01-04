@@ -35,7 +35,13 @@ void AlgorithmStatistics::generate_stats(const Node &current_node) {
                 std::cout << "RU" << '-';
         }
         std::cout << " solution cost: " << current_node.getActualCost();
-    } else std::cout << "Failed";
+        calcEBF(current_node.getDepth());
+        calcDN(current_node.getDepth());
+    } else{
+        std::cout << "Failed";
+        calcEBF(getMax());
+        calcDN(getMax());
+    }
     std::cout << std::endl;
     std::cout << "d/N : " << getDN() << std::endl;
     std::cout << "time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
@@ -48,7 +54,7 @@ void AlgorithmStatistics::generate_stats(const Node &current_node) {
 double AlgorithmStatistics::getAvg() const {
     if (_no_of_cutoffs == 0)
         return 0;
-    return _sum_of_cutoffs_depths / _no_of_cutoffs;
+    return double (_sum_of_cutoffs_depths) / _no_of_cutoffs;
 }
 
 void AlgorithmStatistics::addCutoffToSum(int cut_off_depth) {
@@ -68,4 +74,10 @@ void AlgorithmStatistics::update_cutoffs(int cutoff_depth) {
     if (_max == 0 || _max < cutoff_depth)
         _max = cutoff_depth;
     addCutoffToSum(cutoff_depth);
+}
+
+void AlgorithmStatistics::calcDN(int depth) {
+    if(!getExplored())
+        return;
+    setDN(double(depth) / getExplored());
 }

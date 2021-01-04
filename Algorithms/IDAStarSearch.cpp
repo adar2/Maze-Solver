@@ -26,16 +26,13 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
         f_limit = results_pair.second;
         if (found != nullptr) {
             setEndStatus(true);
-            int depth = found->getPathTilNow().size();
-            setDN(double(depth) / getExplored());
-            calcEBF(depth);
 //            print_path(array, dimension, *found);
             generate_stats(*found);
             return 0;
         }
         if (f_limit == std::numeric_limits<int>::max() || diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
-            generate_stats(*root);
             //failed or timeout
+            generate_stats(*root);
             return 1;
         }
     }
@@ -61,6 +58,8 @@ IDAStarSearch::DFS_CONTOUR(int **array, int dimension, const shared_ptr<Node>&cu
     getInstance()._explored++;
     successors = current_node->successors(array, dimension);
     for (const auto& node : *successors) {
+        // avoid expanding nodes that are on current node path
+        // optimization to avoid circles and going backward on path
         if (std::find(current_node->getPathTilNow().begin(), current_node->getPathTilNow().end(),pair<int, int>(node->getRow(), node->getCol())) != current_node->getPathTilNow().end()){
             continue;
         }

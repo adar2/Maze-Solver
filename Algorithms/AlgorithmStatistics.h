@@ -27,15 +27,15 @@ protected:
     // total number of nodes explored bu the algorithm
     int _explored;
     // min depth cutoff
-    double _min;
+    int _min;
     // avg depth cutoff
     double _avg;
     // max depth cutoff
-    double _max;
+    int _max;
     // total cutoff
-    double _no_of_cutoffs;
+    int _no_of_cutoffs;
     // sum of cutoffs depths
-    double _sum_of_cutoffs_depths;
+    int _sum_of_cutoffs_depths;
     // algorithm time
     clock_t _start_time;
     // keep track on time in order to limit algorithm run time
@@ -65,6 +65,8 @@ public:
 
     void setDN(double dN) { _dN = dN; };
 
+    void calcDN(int depth);
+
     double getEBF() const { return _ebf; };
 
     void setEBF(double ebf) { _ebf = ebf; };
@@ -75,15 +77,15 @@ public:
 
     void setExplored(int explored) { _explored = explored; };
 
-    double getMin() const { return _min; };
+    int getMin() const { return _min; };
 
-    void setMin(double min) { _min = min; };
+    void setMin(int min) { _min = min; };
 
     double getAvg() const ;
 
-    double getMax() const { return _max; };
+    int getMax() const { return _max; };
 
-    void setMax(double max) { _max = max; };
+    void setMax(int max) { _max = max; };
 
     void addCutoffToSum(int cut_off_depth);
 
