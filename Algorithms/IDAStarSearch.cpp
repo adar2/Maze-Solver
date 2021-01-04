@@ -28,7 +28,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
             setEndStatus(true);
             int depth = found->getPathTilNow().size();
             setDN(double(depth) / getExplored());
-            calcEbf(depth);
+            calcEBF(depth);
 //            print_path(array, dimension, *found);
             generate_stats(*found);
             return 0;

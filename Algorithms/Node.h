@@ -86,9 +86,11 @@ public:
     void setActualCost(int actualCost);
 
     Node &operator=(const Node &node);
+
     // function that returns node successors as a vector of pointers to nodes.
     shared_ptr<vector<shared_ptr<Node>>> successors(int **array,const int& dimension);
 
+    // friend functions, operator overloading for nodes comparison.
     friend bool operator==(const Node &node1, const Node &node2);
 
     friend bool operator!=(const Node &node1, const Node &node2);

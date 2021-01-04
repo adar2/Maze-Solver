@@ -183,7 +183,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         sol1->setActualCost(sol1->getActualCost() + sol2->getActualCost() - array[sol1->getRow()][sol1->getCol()]);
         double sol_depth = sol1->getPathTilNow().size();
         setDN(sol_depth/getExplored());
-        calcEbf(sol_depth);
+        calcEBF(sol_depth);
         print_path(array, dimension, *sol1);
         std::cout << std::endl;
         generate_stats(*sol1);

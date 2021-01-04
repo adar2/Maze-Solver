@@ -47,9 +47,9 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
             setExplored(visited.size());
             if (!time_out) {
                 setEndStatus(true);
-                double depth = current_node->getPathTilNow().size();
-                setDN(depth / getExplored());
-                setEbf(pow(getExplored(), pow(depth, -1)));
+                int depth = current_node->getPathTilNow().size();
+                setDN(double(depth) / getExplored());
+                calcEBF(depth);
             }
             print_path(array, dimension, *current_node);
             generate_stats(*current_node);

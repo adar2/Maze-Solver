@@ -24,6 +24,7 @@ int UniformCostSearch::run_algorithm(int **array, int dimension, int *source, in
     shared_ptr<Node> current_node;
     // time out indicator
     bool time_out;
+    int expand_counter;
     // init the source node
     shared_ptr<Node> sourceNode (new Node(0, 0, source[0], source[1], 0));
     // insert source node coordinates to the path
@@ -36,16 +37,24 @@ int UniformCostSearch::run_algorithm(int **array, int dimension, int *source, in
         setCurrentTime(clock());
         current_node = *openList.begin();
         openList.erase(openList.begin());
-        if (*current_node == *goalNode) {
-            setEndStatus(true);
+        time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
+        if (*current_node == *goalNode || time_out) {
             setExplored(visited.size());
+            if(!time_out){
+                setEndStatus(true);
+                int depth = current_node->getPathTilNow().size();
+                setDN(double(depth) / getExplored());
+                calcEBF(depth);
+                // reached to goal state
+            }
             generate_stats(*current_node);
-            // reached to goal state
             return 0;
         }
         visited[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
+        expand_counter = 0;
         successors = current_node->successors(array,dimension);
         for(const auto& successor:*successors){
+            expand_counter++;
             auto open_list_iterator = std::find_if(openList.begin(), openList.end(), [&successor](const shared_ptr<Node>& node){return *node == *successor;});
             auto explored_iterator = visited.find(pair<int, int>(successor->getRow(), successor->getCol()));
             // if the node is not visited and not in the open list, add it to open list.
@@ -55,7 +64,10 @@ int UniformCostSearch::run_algorithm(int **array, int dimension, int *source, in
                      (*open_list_iterator)->getActualCost() > successor->getActualCost()) {
                 openList.erase(open_list_iterator);
                 openList.insert(successor);
-            }
+            } else expand_counter--;
+        }
+        if(!expand_counter){
+            update_cutoffs(current_node->getDepth());
         }
     }
     return 1;

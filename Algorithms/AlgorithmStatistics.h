@@ -38,6 +38,7 @@ protected:
     double _sum_of_cutoffs_depths;
     // algorithm time
     clock_t _start_time;
+    // keep track on time in order to limit algorithm run time
     clock_t _current_time;
 
     AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _no_of_cutoffs(0),_sum_of_cutoffs_depths(0),
@@ -64,11 +65,11 @@ public:
 
     void setDN(double dN) { _dN = dN; };
 
-    double getEbf() const { return _ebf; };
+    double getEBF() const { return _ebf; };
 
-    void setEbf(double ebf) { _ebf = ebf; };
+    void setEBF(double ebf) { _ebf = ebf; };
 
-    void calcEbf(int depth);
+    void calcEBF(int depth);
 
     int getExplored() const { return _explored; };
 
@@ -98,7 +99,7 @@ public:
         _current_time = currentTime;
     }
 
-    static double diff_clock(clock_t clock1, clock_t clock2);
+    static double diff_clock(const clock_t& clock1, const clock_t& clock2);
 
     void update_cutoffs(int cutoff_depth);
 
@@ -107,7 +108,7 @@ public:
 
 
 
-// for debugging purposes
+// for debugging and path visualization purposes , will print the path marked by red on linux os
 static void print_path(int **array, int dimension,const Node &current_node) {
     auto path_start = current_node.getPathTilNow().begin();
     auto path_end = current_node.getPathTilNow().end();
@@ -119,24 +120,6 @@ static void print_path(int **array, int dimension,const Node &current_node) {
                 std::cout << '(' << array[i][j] << "), ";
         }
         std::cout << std::endl;
-    }
-    for (auto item = path_start + 1; item != path_end; ++item) {
-        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second - 1)
-            std::cout << "LU" << ',';
-        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second)
-            std::cout << "U" << ',';
-        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second - 1)
-            std::cout << "LD" << ',';
-        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second)
-            std::cout << "D" << ',';
-        if (item->first == (item - 1)->first && item->second == (item - 1)->second + 1)
-            std::cout << "R" << ',';
-        if (item->first == (item - 1)->first && item->second == (item - 1)->second - 1)
-            std::cout << "L" << ',';
-        if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second + 1)
-            std::cout << "RD" << ',';
-        if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second + 1)
-            std::cout << "RU" << ',';
     }
     std::cout << std::endl;
 }

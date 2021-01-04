@@ -37,7 +37,7 @@ IterativeDeepeningSearch::DLS(int **array, int dimension,const shared_ptr<Node>&
             setEndStatus(true);
             solution_depth = current_node->getDepth();
             setDN(double(solution_depth) / getExplored());
-            calcEbf(solution_depth);
+            calcEBF(solution_depth);
             return {current_node, true};
         }
         if (current_node->getDepth() < limit) {
