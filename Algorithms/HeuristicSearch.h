@@ -25,7 +25,7 @@ public:
     // method for setting the heuristic function.
     void setHeuristicFunction(int (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &));
     // add to sum node h value
-    void sumNodeHeuristic(int h);
+    void sumNodeHeuristic(double h);
     // return avg h value of the search
     double getAvg() const;
     // method for generate heuristic related stats.

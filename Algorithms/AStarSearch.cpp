@@ -13,7 +13,7 @@ using std::cout;
 using std::endl;
 
 
-int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
+int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     // closed list
     unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash> visited = unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash>();
     // open list
@@ -24,11 +24,12 @@ int AStarSearch::run_algorithm(int **array, int dimension, int *source, int *goa
     bool time_out;
     // row and col hold the matrix direction according to node actions.
     // g_cost is the actual weight of the path
-    int expand_counter, h_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
-                                                     pair<int, int>(goal[0], goal[1])), g_cost = 0;
+    int expand_counter;
+    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
+                                                     pair<int, int>(goal[0], goal[1]));
     sumNodeHeuristic(h_cost);
     // init the source node
-    shared_ptr<Node> sourceNode (new Node(h_cost, g_cost, source[0], source[1], 0));
+    shared_ptr<Node> sourceNode (new Node(h_cost, 0, source[0], source[1], 0));
     // insert source node coordinates to the path
     sourceNode->insertElementToPath(pair<int, int>(sourceNode->getRow(), sourceNode->getCol()));
     // init goal node for goal reached comparison

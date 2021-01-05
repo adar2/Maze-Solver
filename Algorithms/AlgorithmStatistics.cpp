@@ -59,7 +59,7 @@ double AlgorithmStatistics::getAvg() const {
 
 void AlgorithmStatistics::addCutoffToSum(int cut_off_depth) {
     _sum_of_cutoffs_depths += cut_off_depth;
-    _no_of_cutoffs++;
+    ++_no_of_cutoffs;
 }
 
 void AlgorithmStatistics::calcEBF(int depth) {

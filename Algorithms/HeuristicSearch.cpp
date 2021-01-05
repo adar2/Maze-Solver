@@ -9,7 +9,7 @@ void HeuristicSearch::setHeuristicFunction(int (*heuristicFunction)(const pair<i
     _heuristic_function = heuristicFunction;
 }
 
-void HeuristicSearch::sumNodeHeuristic(int h) {
+void HeuristicSearch::sumNodeHeuristic(double h) {
     _nodes_heuristic_sum += h;
     ++_no_of_nodes;
 }

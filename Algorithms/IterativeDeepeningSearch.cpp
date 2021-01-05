@@ -17,7 +17,7 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 
 
 pair<shared_ptr<Node>, bool>
-IterativeDeepeningSearch::DLS(int **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit) {
+IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit) {
     bool any_remaining = false, time_out;
     shared_ptr<vector<shared_ptr<Node>>> successors;
     stack<shared_ptr<Node>> frontier = stack<shared_ptr<Node>>();
@@ -58,7 +58,7 @@ IterativeDeepeningSearch::DLS(int **array, int dimension,const shared_ptr<Node>&
     return {nullptr, any_remaining};
 }
 
-int IterativeDeepeningSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
+int IterativeDeepeningSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     shared_ptr<Node> found;
     bool any_remaining;
     shared_ptr<Node> root ( new Node(0, 0, source[0], source[1], 0));

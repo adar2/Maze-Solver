@@ -24,9 +24,9 @@ enum actions {
 class Node {
 private:
     // value of heuristic function from current node to goal node.
-    int _heuristic_cost;
+    double _heuristic_cost;
     // actual cost for reaching this node from source node.
-    int _actual_cost;
+    double _actual_cost;
     // holds the coordinates of nodes on the path to this node.
     deque<pair<int, int>> _path_til_now;
     // row coordinate of this node in the cost matrix.
@@ -38,7 +38,7 @@ private:
 public:
     Node() : _heuristic_cost(0), _actual_cost(0), _row(0), _col(0), _depth(0) {};
 
-    Node(int heuristic_cost, int actual_cost, int row, int col, int depth) : _heuristic_cost(heuristic_cost),
+    Node(double heuristic_cost, double actual_cost, int row, int col, int depth) : _heuristic_cost(heuristic_cost),
                                                                              _actual_cost(actual_cost), _row(row),
                                                                              _col(col), _depth(depth) {};
 
@@ -77,18 +77,18 @@ public:
 
     void setDepth(int depth);
 
-    int getHeuristicCost() const;
+    double getHeuristicCost() const;
 
-    void setHeuristicCost(int heuristicCost);
+    void setHeuristicCost(double heuristicCost);
 
-    int getActualCost() const;
+    double getActualCost() const;
 
-    void setActualCost(int actualCost);
+    void setActualCost(double actualCost);
 
     Node &operator=(const Node &node);
 
     // function that returns node successors as a vector of pointers to nodes.
-    shared_ptr<vector<shared_ptr<Node>>> successors(int **array,const int& dimension);
+    shared_ptr<vector<shared_ptr<Node>>> successors(double **array,const int& dimension);
 
     // friend functions, operator overloading for nodes comparison.
     friend bool operator==(const Node &node1, const Node &node2);

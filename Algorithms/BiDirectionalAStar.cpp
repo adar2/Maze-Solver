@@ -8,7 +8,7 @@
 using std::multiset;
 using std::unordered_map;
 
-int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
+int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     //open list front search
     multiset<shared_ptr<Node>,lessCompNodePointers> frontier_front = multiset<shared_ptr<Node>,lessCompNodePointers>();
     //open list backward search
@@ -22,11 +22,11 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
     shared_ptr<vector<shared_ptr<Node>>> successors;
     // row and col hold the matrix direction according to node actions.
     // g_cost is the actual weight of the path
-    int expand_counter, g_cost = 0, sum, min = 0;
+    int expand_counter, sum, min = 0;
     // h_cost is the heuristic cost of the node to goal node
     int h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
     // source node to start a search from it to goal node, and from goal node to source node.
-    shared_ptr<Node> sourceNode (new Node(h_cost, g_cost, source[0], source[1], 0));
+    shared_ptr<Node> sourceNode (new Node(h_cost, 0, source[0], source[1], 0));
     // inserts source node coordinates to its path
     sourceNode->insertElementToPath(pair<int, int>(sourceNode->getRow(), sourceNode->getCol()));
     // the heuristic function is symmetric so source to goal is the same as goal to source
@@ -91,7 +91,7 @@ int BiDirectionalAStar::run_algorithm(int **array, int dimension, int *source, i
         }
         //check again as it may happen between the forward step to the backward step.
         //check whether node v is at the top of both frontier_front and frontier_back
-        if (*(*frontier_front.begin()) == *(*frontier_back.begin())) {
+        if (!frontier_front.empty() && !frontier_back.empty() && *(*frontier_front.begin()) == *(*frontier_back.begin())) {
             setEndStatus(true);
             break;
         }

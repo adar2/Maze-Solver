@@ -21,7 +21,7 @@ private:
     void operator=(const AStarSearch &);
 
 public:
-    int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) override ;
+    int run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) override ;
 
     static AStarSearch &getInstance();
 

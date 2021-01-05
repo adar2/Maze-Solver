@@ -64,13 +64,13 @@ public:
     double getDN() const { return _dN; };
 
     void setDN(double dN) { _dN = dN; };
-
+    // calculate d/N branching factor using solution depth in case of success or with max cutoff depth in failure.
     void calcDN(int depth);
 
     double getEBF() const { return _ebf; };
 
     void setEBF(double ebf) { _ebf = ebf; };
-
+    // calculate effective branching factor using solution depth in case of success or with max cutoff depth in failure.
     void calcEBF(int depth);
 
     int getExplored() const { return _explored; };
@@ -100,18 +100,18 @@ public:
     void setCurrentTime(const clock_t &currentTime) {
         _current_time = currentTime;
     }
-
+    // static function for comparing time
     static double diff_clock(const clock_t& clock1, const clock_t& clock2);
-
+    // function for maintain algorithm min,max and avg cutoff statistics/
     void update_cutoffs(int cutoff_depth);
-
+    // function for statistics generation, overloaded in heuristic search algorithm to combine with heuristic stats.
     virtual void generate_stats(const Node &current_node);
 };
 
 
 
 // for debugging and path visualization purposes , will print the path marked by red on linux os
-static void print_path(int **array, int dimension,const Node &current_node) {
+static void print_path(double **array, int dimension,const Node &current_node) {
     auto path_start = current_node.getPathTilNow().begin();
     auto path_end = current_node.getPathTilNow().end();
     for (int i = 0; i < dimension; ++i) {

@@ -37,12 +37,12 @@ struct pair_hash {
     }
 };
 
-int zero_function(const std::pair<int, int>&, const std::pair<int, int>&);
-
 int euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
-int manhattan_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+int chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
-void parse_file(char* file_name);
+int octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+
+void parse_file(const char* file_name);
 
 #endif //AI_PROJECT_UTILS_H

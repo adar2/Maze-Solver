@@ -18,10 +18,10 @@ private:
 
     void operator=(const IDAStarSearch &);
 public:
-    int run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) override;
+    int run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) override;
 
-    pair<shared_ptr<Node>, int>
-    DFS_CONTOUR(int **array, int dimension, const shared_ptr<Node>& node, const shared_ptr<Node>& goal, int f_limit, float time_limit);
+    pair<shared_ptr<Node>, double>
+    DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>& node, const shared_ptr<Node>& goal, double f_limit, float time_limit);
 
     static IDAStarSearch &getInstance();
 

@@ -56,24 +56,25 @@ bool operator!=(const Node &node1, const Node &node2) {
     return node1.getRow() != node2.getRow() || node1.getCol() != node2.getCol();
 }
 
-int Node::getHeuristicCost() const {
+double Node::getHeuristicCost() const {
     return _heuristic_cost;
 }
 
-void Node::setHeuristicCost(int heuristicCost) {
+void Node::setHeuristicCost(double heuristicCost) {
     _heuristic_cost = heuristicCost;
 }
 
-int Node::getActualCost() const {
+double Node::getActualCost() const {
     return _actual_cost;
 }
 
-void Node::setActualCost(int actualCost) {
+void Node::setActualCost(double actualCost) {
     _actual_cost = actualCost;
 }
 
-shared_ptr<vector<shared_ptr<Node>>> Node::successors(int **array,const int& dimension) {
-    int row=0,col=0,g_cost;
+shared_ptr<vector<shared_ptr<Node>>> Node::successors(double **array,const int& dimension) {
+    int row=0,col=0;
+    double g_cost;
     Node& current_node = *this;
     shared_ptr<vector<shared_ptr<Node>>> successors (new vector<shared_ptr<Node>>());
     for (int i = 0; i < ACTIONS_SIZE; ++i) {

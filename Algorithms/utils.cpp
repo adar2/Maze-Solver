@@ -13,29 +13,31 @@
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
 
-#define TIME_LIMIT 20
-
-
-int zero_function(const pair<int, int> &, const pair<int, int> &) {
-    return 0;
-}
 
 int euclidean_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2));
+    return int(sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2)));
 }
 
-int manhattan_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return abs(p1.first - p2.first) + abs(p1.second - p2.second);
+int chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
+    return std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
 }
 
-void parse_file(char *file_name) {
+int octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
+    int dx = abs(p1.first - p2.first);
+    int dy = abs(p1.second - p2.second);
+    return int((dx + dy) + (-0.585)*std::min(dx, dy));
+}
+
+void parse_file(const char *file_name) {
     std::string algorithm_name, dimension, sourceStr, targetStr;
     auto *source = new int[2];
     auto *target = new int[2];
+    float time_limit;
     std::ifstream inputFile(file_name);
     getline(inputFile, algorithm_name, '\n');
     // remove carriage return from algorithm name string.
-    algorithm_name.erase(algorithm_name.size() - 1);
+    if(algorithm_name.find('\r') != -1)
+        algorithm_name.erase(algorithm_name.size() - 1);
     getline(inputFile, dimension, '\n');
     getline(inputFile, sourceStr, '\n');
     getline(inputFile, targetStr, '\n');
@@ -46,18 +48,19 @@ void parse_file(char *file_name) {
     targetStr.erase(0, targetStr.find(',') + 1);
     target[1] = stoi(targetStr);
     int d = stoi(dimension);
+    time_limit = float(log2(d));
     std::string tmpStr;
-    auto **array = new int *[d];
+    auto **array = new double *[d];
     for (int i = 0; i < d; ++i) {
-        array[i] = new int[d];
+        array[i] = new double[d];
         getline(inputFile, tmpStr, '\n');
         tmpStr.erase(remove(tmpStr.begin(), tmpStr.end(), ' '), tmpStr.end());
-        size_t pos = 0;
+        size_t pos;
         std::string token;
         for (int j = 0; j < d; ++j) {
             pos = tmpStr.find(',');
             token = tmpStr.substr(0, pos);
-            array[i][j] = stoi(token);
+            array[i][j] = stod(token);
             tmpStr.erase(0, pos + 1);
         }
     }
@@ -73,22 +76,22 @@ void parse_file(char *file_name) {
     }
     if (algorithm_name == "BIASTAR") {
         BiDirectionalAStar::getInstance().setProblemName(file_name);
-        BiDirectionalAStar::getInstance().setHeuristicFunction(manhattan_distance);
-        BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+        BiDirectionalAStar::getInstance().setHeuristicFunction(octile_distance);
+        BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "IDASTAR") {
         IDAStarSearch::getInstance().setProblemName(file_name);
-        IDAStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
-        IDAStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+        IDAStarSearch::getInstance().setHeuristicFunction(octile_distance);
+        IDAStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "ASTAR") {
-        AStarSearch::getInstance().setHeuristicFunction(manhattan_distance);
         AStarSearch::getInstance().setProblemName(file_name);
-        AStarSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+        AStarSearch::getInstance().setHeuristicFunction(octile_distance);
+        AStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "UCS") {
         UniformCostSearch::getInstance().setProblemName(file_name);
-        UniformCostSearch::getInstance().run_algorithm(array,d,source,target,TIME_LIMIT);
+        UniformCostSearch::getInstance().run_algorithm(array,d,source,target,time_limit);
     } else if (algorithm_name == "IDS") {
         IterativeDeepeningSearch::getInstance().setProblemName(file_name);
-        IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, TIME_LIMIT);
+        IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else {
         std::cout << "unknown algorithm, exiting.." << std::endl;
     }

@@ -11,7 +11,7 @@
 
 class IterativeDeepeningSearch : public ISearchAlgorithm, public AlgorithmStatistics {
 private:
-    pair<shared_ptr<Node>, bool> DLS(int **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit);
+    pair<shared_ptr<Node>, bool> DLS(double **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit);
 
     IterativeDeepeningSearch() : AlgorithmStatistics() {};
 
@@ -22,7 +22,7 @@ private:
 public:
     static IterativeDeepeningSearch &getInstance();
 
-    int run_algorithm(int **array, int dimension, int *start, int *target, float time_limit) override;
+    int run_algorithm(double **array, int dimension, int *start, int *target, float time_limit) override;
 };
 
 

@@ -15,7 +15,7 @@ UniformCostSearch &UniformCostSearch::getInstance() {
     return instance;
 }
 
-int UniformCostSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
+int UniformCostSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     // closed list
     unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash> visited = unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash>();
     // open list

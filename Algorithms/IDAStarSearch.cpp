@@ -10,11 +10,11 @@ IDAStarSearch &IDAStarSearch::getInstance() {
     return instance;
 }
 
-int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *goal, float time_limit) {
+int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     shared_ptr<Node> found;
-    pair<shared_ptr<Node>, int> results_pair;
+    pair<shared_ptr<Node>, double> results_pair;
     // initialize f_limit to the heuristic value of root
-    int f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
+    double f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
     // try to improve performance by increase f_limit by at least some constant
     sumNodeHeuristic(f_limit);
     shared_ptr<Node> root  (new Node(f_limit, 0, source[0], source[1], 0));
@@ -30,7 +30,7 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
             generate_stats(*found);
             return 0;
         }
-        if (f_limit == std::numeric_limits<int>::max() || diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
+        if (f_limit == std::numeric_limits<double>::infinity() || diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
             //failed or timeout
             generate_stats(*root);
             return 1;
@@ -38,14 +38,14 @@ int IDAStarSearch::run_algorithm(int **array, int dimension, int *source, int *g
     }
 }
 
-pair<shared_ptr<Node>, int>
-IDAStarSearch::DFS_CONTOUR(int **array, int dimension, const shared_ptr<Node>&current_node, const shared_ptr<Node>&goal, int f_limit, float time_limit) {
+pair<shared_ptr<Node>, double>
+IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>&current_node, const shared_ptr<Node>&goal, double f_limit, float time_limit) {
     shared_ptr<Node>found;
-    pair<shared_ptr<Node>, int> results_pair;
+    pair<shared_ptr<Node>, double> results_pair;
     shared_ptr<vector<shared_ptr<Node>>> successors;
-    int new_f,h_cost;
-    int next_f = std::numeric_limits<int>::max();
-    int current_node_f = current_node->getHeuristicCost();
+    double new_f,h_cost;
+    double next_f = std::numeric_limits<double>::infinity();
+    double current_node_f = current_node->getHeuristicCost();
     setCurrentTime(clock());
     if (current_node_f > f_limit || diff_clock(getCurrentTime(), getStartTime()) >= time_limit){
         update_cutoffs(current_node->getDepth());
