@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/31/20.
-//
+
 #include "AlgorithmStatistics.h"
 
 double AlgorithmStatistics::diff_clock(const clock_t& clock1, const clock_t& clock2) {
@@ -69,9 +67,9 @@ void AlgorithmStatistics::calcEBF(int depth) {
 }
 
 void AlgorithmStatistics::update_cutoffs(int cutoff_depth) {
-    if (_min == 0 || _min > cutoff_depth)
+    if (_min > cutoff_depth)
         _min = cutoff_depth;
-    if (_max == 0 || _max < cutoff_depth)
+    if (_max < cutoff_depth)
         _max = cutoff_depth;
     addCutoffToSum(cutoff_depth);
 }

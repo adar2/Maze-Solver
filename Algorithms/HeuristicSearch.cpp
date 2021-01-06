@@ -1,11 +1,9 @@
-//
-// Created by r00t on 12/15/20.
-//
+
 
 #include "HeuristicSearch.h"
 #include <iostream>
 
-void HeuristicSearch::setHeuristicFunction(int (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &)) {
+void HeuristicSearch::setHeuristicFunction(double (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &)) {
     _heuristic_function = heuristicFunction;
 }
 

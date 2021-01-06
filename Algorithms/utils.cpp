@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/20/20.
-//
+
 
 #include <iostream>
 #include <fstream>
@@ -14,18 +12,14 @@
 #include "BiDirectionalAStar.h"
 
 
-int euclidean_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return int(sqrt(pow(p1.first - p2.first, 2) + pow(p1.second - p2.second, 2)));
+double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
+    return double(abs(p1.first - p2.first) + abs(p1.second - p2.second));
 }
 
-int chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
-}
-
-int octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
+double octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
     int dx = abs(p1.first - p2.first);
     int dy = abs(p1.second - p2.second);
-    return int((dx + dy) + (-0.585)*std::min(dx, dy));
+    return ((dx + dy) + (-0.585)*std::min(dx, dy));
 }
 
 void parse_file(const char *file_name) {

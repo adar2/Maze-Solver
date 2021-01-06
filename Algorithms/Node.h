@@ -1,6 +1,4 @@
-//
-// Created by adar on 12/8/2020.
-//
+
 
 #ifndef AI_PROJECT_NODE_H
 #define AI_PROJECT_NODE_H
@@ -64,14 +62,6 @@ public:
     void setPathTilNow(const deque<pair<int, int>> &pathTilNow);
 
     void insertElementToPath(const pair<int, int> &p);
-
-    void setRow(int row) {
-        _row = row;
-    }
-
-    void setCol(int col) {
-        _col = col;
-    }
 
     int getDepth() const;
 

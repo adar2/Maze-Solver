@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/15/20.
-//
+
 
 #ifndef AI_PROJECT_BIDIRECTIONALASTAR_H
 #define AI_PROJECT_BIDIRECTIONALASTAR_H

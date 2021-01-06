@@ -1,6 +1,3 @@
-//
-// Created by r00t on 12/14/20.
-//
 
 #ifndef AI_PROJECT_ASTARSEARCH_H
 #define AI_PROJECT_ASTARSEARCH_H

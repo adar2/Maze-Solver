@@ -1,6 +1,3 @@
-//
-// Created by r00t on 12/13/20.
-//
 
 #ifndef AI_PROJECT_ALGORITHMSTATISTICS_H
 #define AI_PROJECT_ALGORITHMSTATISTICS_H
@@ -28,8 +25,6 @@ protected:
     int _explored;
     // min depth cutoff
     int _min;
-    // avg depth cutoff
-    double _avg;
     // max depth cutoff
     int _max;
     // total cutoff
@@ -41,7 +36,7 @@ protected:
     // keep track on time in order to limit algorithm run time
     clock_t _current_time;
 
-    AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _explored(0), _min(0), _avg(0), _max(0), _no_of_cutoffs(0),_sum_of_cutoffs_depths(0),
+    AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _explored(0), _min(std::numeric_limits<int>::max()), _max(0), _no_of_cutoffs(0),_sum_of_cutoffs_depths(0),
                             _start_time(clock()),_current_time(0) {}
 
 public:

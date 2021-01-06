@@ -1,6 +1,3 @@
-//
-// Created by r00t on 12/15/20.
-//
 
 #include "IDAStarSearch.h"
 #include <limits>
@@ -15,12 +12,14 @@ int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int
     pair<shared_ptr<Node>, double> results_pair;
     // initialize f_limit to the heuristic value of root
     double f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
+    double old_f_limit;
     // try to improve performance by increase f_limit by at least some constant
     sumNodeHeuristic(f_limit);
     shared_ptr<Node> root  (new Node(f_limit, 0, source[0], source[1], 0));
     root->insertElementToPath(pair<int, int>(source[0], source[1]));
     shared_ptr<Node> target  (new Node(0, 0, goal[0], goal[1], 0));
     while (true) {
+        old_f_limit = f_limit;
         results_pair = DFS_CONTOUR(array, dimension, root, target, f_limit, time_limit);
         found = results_pair.first;
         f_limit = results_pair.second;
@@ -35,6 +34,9 @@ int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int
             generate_stats(*root);
             return 1;
         }
+        // try to improve performance by limit f_limit steps by at least 2.
+        if(f_limit - old_f_limit < 2)
+            f_limit = old_f_limit + 2;
     }
 }
 

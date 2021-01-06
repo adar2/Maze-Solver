@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/13/20.
-//
+
 
 #include "IterativeDeepeningSearch.h"
 

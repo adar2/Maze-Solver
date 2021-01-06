@@ -1,6 +1,3 @@
-//
-// Created by r00t on 12/14/20.
-//
 
 #include "AStarSearch.h"
 #include <vector>
@@ -22,9 +19,8 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
     shared_ptr<Node> current_node;
     // time out indicator
     bool time_out;
-    // row and col hold the matrix direction according to node actions.
-    // g_cost is the actual weight of the path
     int expand_counter;
+    // calc heuristic value of the source node.
     double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
                                                      pair<int, int>(goal[0], goal[1]));
     sumNodeHeuristic(h_cost);
@@ -43,9 +39,9 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         current_node = *openList.begin();
         openList.erase(openList.begin());
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
+        ++getInstance()._explored;
         // if goal node reached or time out stop the search
         if (*current_node == *goalNode || time_out) {
-            setExplored(visited.size());
             if (!time_out) {
                 setEndStatus(true);
             }
@@ -57,14 +53,15 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         visited[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
         // zero the expand counter for the current node in order to check cutoffs
         expand_counter = 0;
-        // loop over node actions
+        // loop current node successors.
         successors = current_node->successors(array,dimension);
         for(const auto& successor :*successors){
             expand_counter++;
             h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()));
             successor->setHeuristicCost(successor->getActualCost() + h_cost);
+            // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);
-            // use std::find as it uses operator== for comparison
+            // use std::find_if with lambada function as node pointers comparator.
             auto open_list_iterator = std::find_if(openList.begin(), openList.end(), [&successor](const shared_ptr<Node>& node){return *node == *successor;});
             auto explored_iterator = visited.find(pair<int, int>(successor->getRow(), successor->getCol()));
             // if the node is not visited and not in the open list, add it to open list.
@@ -82,7 +79,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
                 visited.erase(explored_iterator);
                 openList.insert(successor);
             }
-            // if we didnt get into one of the above cond, we didnt expended this node so decrement expend_counter.
+            // if we didnt got into one of the above cond, we didnt expended this node so decrement expend_counter.
             else expand_counter--;
 
         }
@@ -91,8 +88,6 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
             update_cutoffs(current_node->getDepth());
         }
     }
-    // no solution found
-    setExplored(visited.size());
     generate_stats(*current_node);
     return 1;
 }

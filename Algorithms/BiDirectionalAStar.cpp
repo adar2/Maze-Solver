@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/15/20.
-//
+
 
 #include "BiDirectionalAStar.h"
 #include <set>
@@ -20,11 +18,10 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
     // two nodes to hold the solution, one for each direction.
     shared_ptr<Node> current_node, sol1, sol2;
     shared_ptr<vector<shared_ptr<Node>>> successors;
-    // row and col hold the matrix direction according to node actions.
-    // g_cost is the actual weight of the path
-    int expand_counter, sum, min = 0;
+    int expand_counter;
+    double sum, min = 0;
     // h_cost is the heuristic cost of the node to goal node
-    int h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
+    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
     // source node to start a search from it to goal node, and from goal node to source node.
     shared_ptr<Node> sourceNode (new Node(h_cost, 0, source[0], source[1], 0));
     // inserts source node coordinates to its path
@@ -46,7 +43,6 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         }
         // time out
         if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit){
-            setExplored(frontier_front.size() + frontier_back.size());
             generate_stats(*current_node);
             return 1;
         }
@@ -54,6 +50,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_front.begin();
             frontier_front.erase(frontier_front.begin());
+            ++getInstance()._explored;
             // mark that node as visited in the front search
             visited_front[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
             // expand counter is used to detect cutoffs and record the for stats.
@@ -97,7 +94,6 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         }
         // time out
         if(diff_clock(getCurrentTime(),getStartTime()) >= time_limit){
-            setExplored(frontier_front.size() + frontier_back.size());
             generate_stats(*current_node);
             return 1;
         }
@@ -105,6 +101,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_back.begin();
             frontier_back.erase(frontier_back.begin());
+            ++getInstance()._explored;
             // mark that node as visited in the front search
             visited_back[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
             // expand counter is used to detect cutoffs and record the for stats.
@@ -146,7 +143,6 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         }
     }
     // post search phase find the optimal cost
-    setExplored(visited_front.size() + visited_back.size());
     if(getEndStatus()) {
         for (const auto &element : frontier_front) {
             auto found = std::find_if(frontier_back.begin(), frontier_back.end(),

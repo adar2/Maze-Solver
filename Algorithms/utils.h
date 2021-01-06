@@ -1,6 +1,4 @@
-//
-// Created by r00t on 12/20/20.
-//
+
 
 #ifndef AI_PROJECT_UTILS_H
 #define AI_PROJECT_UTILS_H
@@ -37,11 +35,9 @@ struct pair_hash {
     }
 };
 
-int euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+double chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
-int chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
-
-int octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+double octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
 void parse_file(const char* file_name);
 

@@ -1,6 +1,4 @@
-//
-// Created by r00t on 1/2/21.
-//
+
 
 #ifndef AI_PROJECT_UNIFORMCOSTSEARCH_H
 #define AI_PROJECT_UNIFORMCOSTSEARCH_H

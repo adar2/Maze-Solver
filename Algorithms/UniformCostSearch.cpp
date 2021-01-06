@@ -1,6 +1,4 @@
-//
-// Created by r00t on 1/2/21.
-//
+
 
 #include "UniformCostSearch.h"
 #include <set>
@@ -38,8 +36,8 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
         current_node = *openList.begin();
         openList.erase(openList.begin());
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
+        ++getInstance()._explored;
         if (*current_node == *goalNode || time_out) {
-            setExplored(visited.size());
             if(!time_out){
                 // reached to goal state
                 setEndStatus(true);
