@@ -37,7 +37,7 @@ struct pair_hash {
 
 double chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
-double octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
+double avg_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
 void parse_file(const char* file_name);
 

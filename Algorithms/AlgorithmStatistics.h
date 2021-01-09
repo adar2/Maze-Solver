@@ -22,7 +22,7 @@ protected:
     // effective branching factor
     double _ebf;
     // total number of nodes explored bu the algorithm
-    int _explored;
+    int _expanded;
     // min depth cutoff
     int _min;
     // max depth cutoff
@@ -36,8 +36,8 @@ protected:
     // keep track on time in order to limit algorithm run time
     clock_t _current_time;
 
-    AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _explored(0), _min(std::numeric_limits<int>::max()), _max(0), _no_of_cutoffs(0),_sum_of_cutoffs_depths(0),
-                            _start_time(clock()),_current_time(0) {}
+    AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _expanded(0), _min(std::numeric_limits<int>::max()), _max(0), _no_of_cutoffs(0), _sum_of_cutoffs_depths(0),
+                            _start_time(clock()), _current_time(0) {}
 
 public:
     bool getEndStatus() const {
@@ -68,19 +68,13 @@ public:
     // calculate effective branching factor using solution depth in case of success or with max cutoff depth in failure.
     void calcEBF(int depth);
 
-    int getExplored() const { return _explored; };
+    int getExpanded() const { return _expanded; };;
 
-    void setExplored(int explored) { _explored = explored; };
-
-    int getMin() const { return _min; };
-
-    void setMin(int min) { _min = min; };
+    int getMin() const { return _min; };;
 
     double getAvg() const ;
 
-    int getMax() const { return _max; };
-
-    void setMax(int max) { _max = max; };
+    int getMax() const { return _max; };;
 
     void addCutoffToSum(int cut_off_depth);
 
@@ -105,7 +99,7 @@ public:
 
 
 
-// for debugging and path visualization purposes , will print the path marked by red on linux os
+// for debugging and path visualization purposes , will print the entire cost matrix with path marked by red on linux os
 static void print_path(double **array, int dimension,const Node &current_node) {
     auto path_start = current_node.getPathTilNow().begin();
     auto path_end = current_node.getPathTilNow().end();

@@ -36,7 +36,7 @@ IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Nod
         }
         if (current_node->getDepth() < limit) {
             //increase the explored counter by one for the current node been expanded
-            getInstance()._explored++;
+            getInstance()._expanded++;
             explored[pair<int, int>(current_node->getRow(), current_node->getCol())] = true;
             successors = current_node->successors(array,dimension);
             // because we use stack , we push successors in reversed order.
@@ -59,12 +59,11 @@ IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Nod
 int IterativeDeepeningSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     shared_ptr<Node> found;
     bool any_remaining;
-    shared_ptr<Node> root ( new Node(0, 0, source[0], source[1], 0));
-    root->insertElementToPath(pair<int, int>(source[0], source[1]));
+    shared_ptr<Node> sourceNode (new Node(0, 0, source[0], source[1], 0));
+    sourceNode->insertElementToPath(pair<int, int>(source[0], source[1]));
     shared_ptr<Node>target( new Node(0, 0, goal[0], goal[1], 0));
-    int max_depth = std::numeric_limits<int>::max();
-    for (int i = 0; i < max_depth; ++i) {
-        auto result = DLS(array, dimension, root, target, i, time_limit);
+    for (int i = 0;; ++i) {
+        auto result = DLS(array, dimension, sourceNode, target, i, time_limit);
         found = result.first;
         any_remaining = result.second;
         if (found != nullptr) {
@@ -75,7 +74,7 @@ int IterativeDeepeningSearch::run_algorithm(double **array, int dimension, int *
         }
         if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining){
             //time out or end of search tree reached
-            generate_stats(*root);
+            generate_stats(*sourceNode);
             break;
 
         }

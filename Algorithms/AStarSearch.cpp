@@ -39,7 +39,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         current_node = *openList.begin();
         openList.erase(openList.begin());
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
-        ++getInstance()._explored;
+        ++getInstance()._expanded;
         // if goal node reached or time out stop the search
         if (*current_node == *goalNode || time_out) {
             if (!time_out) {
@@ -58,7 +58,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         for(const auto& successor :*successors){
             expand_counter++;
             h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()));
-            successor->setHeuristicCost(successor->getActualCost() + h_cost);
+            successor->setEvaluationCost(successor->getActualCost() + h_cost);
             // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);
             // use std::find_if with lambada function as node pointers comparator.
@@ -69,13 +69,13 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
                 openList.insert(successor);
             // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
             else if (open_list_iterator != openList.end() &&
-                    (*open_list_iterator)->getHeuristicCost() > successor->getHeuristicCost()) {
+                    (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
                 openList.erase(open_list_iterator);
                 openList.insert(successor);
             }
             // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
             else if (explored_iterator != visited.end() &&
-                       explored_iterator->second->getHeuristicCost() > successor->getHeuristicCost()) {
+                    explored_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
                 visited.erase(explored_iterator);
                 openList.insert(successor);
             }

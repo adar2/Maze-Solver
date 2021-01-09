@@ -19,7 +19,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
     shared_ptr<Node> current_node, sol1, sol2;
     shared_ptr<vector<shared_ptr<Node>>> successors;
     int expand_counter;
-    double sum, min = 0;
+    double sum, min = std::numeric_limits<double>::max();
     // h_cost is the heuristic cost of the node to goal node
     double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
     // source node to start a search from it to goal node, and from goal node to source node.
@@ -50,7 +50,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_front.begin();
             frontier_front.erase(frontier_front.begin());
-            ++getInstance()._explored;
+            ++getInstance()._expanded;
             // mark that node as visited in the front search
             visited_front[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
             // expand counter is used to detect cutoffs and record the for stats.
@@ -60,7 +60,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             for(const auto& successor : *successors){
                 expand_counter++;
                 h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()));
-                successor->setHeuristicCost(successor->getActualCost() + h_cost);
+                successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
                 auto open_list_iterator = std::find_if(frontier_front.begin(), frontier_front.end(), [&successor](const shared_ptr<Node>& node){return *node == *successor;});
@@ -70,12 +70,12 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                     frontier_front.insert(successor);
                 // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
                 else if (open_list_iterator != frontier_front.end() &&
-                         (*open_list_iterator)->getHeuristicCost() > successor->getHeuristicCost()) {
+                        (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
                     frontier_front.erase(open_list_iterator);
                     frontier_front.insert(successor);
                 // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
                 } else if (explored_iterator != visited_front.end() &&
-                           explored_iterator->second->getHeuristicCost() > successor->getHeuristicCost()) {
+                        explored_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
                     visited_front.erase(explored_iterator);
                     frontier_front.insert(successor);
                 // if we didnt get into one of the above cond, we didnt expended this node so decrement expend_counter.
@@ -101,7 +101,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_back.begin();
             frontier_back.erase(frontier_back.begin());
-            ++getInstance()._explored;
+            ++getInstance()._expanded;
             // mark that node as visited in the front search
             visited_back[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
             // expand counter is used to detect cutoffs and record the for stats.
@@ -111,7 +111,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             for(const auto& successor: *successors ){
                 expand_counter++;
                 h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(sourceNode->getRow(), sourceNode->getCol()));
-                successor->setHeuristicCost(successor->getActualCost() + h_cost);
+                successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
                 auto open_list_iterator = std::find_if(frontier_back.begin(), frontier_back.end(), [&successor](const shared_ptr<Node>& node){return *node == *successor;});
@@ -121,14 +121,14 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                     frontier_back.insert(successor);
                 // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
                 else if (open_list_iterator != frontier_back.end() &&
-                         (*open_list_iterator)->getHeuristicCost() > successor->getHeuristicCost()) {
+                        (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
                     frontier_back.erase(open_list_iterator);
                     frontier_back.insert(successor);
 
                 }
                 // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
                 else if (explored_iterator != visited_back.end() &&
-                           explored_iterator->second->getHeuristicCost() > successor->getHeuristicCost()) {
+                        explored_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
                     visited_back.erase(explored_iterator);
                     frontier_back.insert(successor);
 
@@ -142,14 +142,14 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             }
         }
     }
-    // post search phase find the optimal cost
+    // post search phase find the optimal cost, loop through open and closed lists and look for that path with minimum cost which is the optimal path
     if(getEndStatus()) {
         for (const auto &element : frontier_front) {
             auto found = std::find_if(frontier_back.begin(), frontier_back.end(),
                                       [&element](const shared_ptr<Node> &node) { return *node == *element; });
             if (found != frontier_back.end()) {
                 sum = element->getActualCost() + (*found)->getActualCost();
-                if (!min || sum < min) {
+                if (sum < min) {
                     min = sum;
                     sol1 = element;
                     sol2 = (*found);
@@ -164,7 +164,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                                       });
             if (found != visited_back.end()) {
                 sum = element.second->getActualCost() + found->second->getActualCost();
-                if (!min || sum < min) {
+                if (sum < min) {
                     min = sum;
                     sol1 = element.second;
                     sol2 = (*found).second;

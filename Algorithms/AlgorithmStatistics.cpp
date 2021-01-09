@@ -2,15 +2,15 @@
 #include "AlgorithmStatistics.h"
 
 double AlgorithmStatistics::diff_clock(const clock_t& clock1, const clock_t& clock2) {
-        double diff_ticks = clock1 - clock2;
-        double diff_ms = (diff_ticks) / (CLOCKS_PER_SEC / 1000);
+        double diff_ticks = double(clock1) - clock2;
+        double diff_ms = (diff_ticks) / (double (CLOCKS_PER_SEC) / 1000);
         return diff_ms / 1000;
 
 }
 
 void AlgorithmStatistics::generate_stats(const Node &current_node) {
     std::cout << "Problem : " << getProblemName() << std::endl;
-    std::cout << "total nodes explored: " << getExplored() << std::endl;
+    std::cout << "total nodes explored: " << getExpanded() << std::endl;
     if (getEndStatus()) {
         auto path_start = current_node.getPathTilNow().begin();
         auto path_end = current_node.getPathTilNow().end();
@@ -63,7 +63,7 @@ void AlgorithmStatistics::addCutoffToSum(int cut_off_depth) {
 void AlgorithmStatistics::calcEBF(int depth) {
     if(!depth)
         return;
-    setEBF(pow(getExplored(), pow(depth, -1)));
+    setEBF(pow(getExpanded(), pow(depth, -1)));
 }
 
 void AlgorithmStatistics::update_cutoffs(int cutoff_depth) {
@@ -75,7 +75,7 @@ void AlgorithmStatistics::update_cutoffs(int cutoff_depth) {
 }
 
 void AlgorithmStatistics::calcDN(int depth) {
-    if(!getExplored())
+    if(!getExpanded())
         return;
-    setDN(double(depth) / getExplored());
+    setDN(double(depth) / getExpanded());
 }

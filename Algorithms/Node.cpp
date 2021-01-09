@@ -4,7 +4,7 @@
 
 Node &Node::operator=(const Node &node) {
     if (this != &node) {
-        this->_heuristic_cost = node.getHeuristicCost();
+        this->_evaluation_cost = node.getEvaluationCost();
         this->_actual_cost = node.getActualCost();
         this->_row = node.getRow();
         this->_col = node.getCol();
@@ -21,17 +21,17 @@ bool operator==(const Node &node1, const Node &node2) {
 bool operator>(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
-    if (node1.getHeuristicCost() == node2.getHeuristicCost())
-        return (node1.getHeuristicCost() - node1.getActualCost()) > (node2.getHeuristicCost() - node2.getActualCost());
-    return node1.getHeuristicCost() > node2.getHeuristicCost();
+    if (node1.getEvaluationCost() == node2.getEvaluationCost())
+        return (node1.getEvaluationCost() - node1.getActualCost()) > (node2.getEvaluationCost() - node2.getActualCost());
+    return node1.getEvaluationCost() > node2.getEvaluationCost();
 }
 
 bool operator<(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
-    if (node1.getHeuristicCost() == node2.getHeuristicCost())
-        return (node1.getHeuristicCost() - node1.getActualCost()) < (node2.getHeuristicCost() - node2.getActualCost());
-    return node1.getHeuristicCost() < node2.getHeuristicCost();
+    if (node1.getEvaluationCost() == node2.getEvaluationCost())
+        return (node1.getEvaluationCost() - node1.getActualCost()) < (node2.getEvaluationCost() - node2.getActualCost());
+    return node1.getEvaluationCost() < node2.getEvaluationCost();
 }
 
 void Node::insertElementToPath(const pair<int, int> &p) {
@@ -54,12 +54,12 @@ bool operator!=(const Node &node1, const Node &node2) {
     return node1.getRow() != node2.getRow() || node1.getCol() != node2.getCol();
 }
 
-double Node::getHeuristicCost() const {
-    return _heuristic_cost;
+double Node::getEvaluationCost() const {
+    return _evaluation_cost;
 }
 
-void Node::setHeuristicCost(double heuristicCost) {
-    _heuristic_cost = heuristicCost;
+void Node::setEvaluationCost(double heuristicCost) {
+    _evaluation_cost = heuristicCost;
 }
 
 double Node::getActualCost() const {

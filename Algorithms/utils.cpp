@@ -11,15 +11,14 @@
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
 
-
 double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return double(abs(p1.first - p2.first) + abs(p1.second - p2.second));
+    return std::max(abs(p1.first - p2.first),abs(p1.second - p2.second));
 }
 
-double octile_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
+double avg_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
     int dx = abs(p1.first - p2.first);
     int dy = abs(p1.second - p2.second);
-    return ((dx + dy) + (-0.585)*std::min(dx, dy));
+    return double((dx + dy))/2;
 }
 
 void parse_file(const char *file_name) {
@@ -65,20 +64,21 @@ void parse_file(const char *file_name) {
             delete[] array[i];
         }
         delete[] array;
-        std::cout << "Illegal input , exiting.." << std::endl;
+        std::cout << "Illegal input , aborting.." << std::endl;
         return;
     }
+
     if (algorithm_name == "BIASTAR") {
         BiDirectionalAStar::getInstance().setProblemName(file_name);
-        BiDirectionalAStar::getInstance().setHeuristicFunction(octile_distance);
+        BiDirectionalAStar::getInstance().setHeuristicFunction(avg_distance);
         BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "IDASTAR") {
         IDAStarSearch::getInstance().setProblemName(file_name);
-        IDAStarSearch::getInstance().setHeuristicFunction(octile_distance);
+        IDAStarSearch::getInstance().setHeuristicFunction(avg_distance);
         IDAStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "ASTAR") {
         AStarSearch::getInstance().setProblemName(file_name);
-        AStarSearch::getInstance().setHeuristicFunction(octile_distance);
+        AStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
         AStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "UCS") {
         UniformCostSearch::getInstance().setProblemName(file_name);

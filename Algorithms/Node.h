@@ -21,8 +21,8 @@ enum actions {
 
 class Node {
 private:
-    // value of heuristic function from current node to goal node.
-    double _heuristic_cost;
+    // value of actual cost + heuristic function value from current node to goal node.
+    double _evaluation_cost;
     // actual cost for reaching this node from source node.
     double _actual_cost;
     // holds the coordinates of nodes on the path to this node.
@@ -34,13 +34,13 @@ private:
     // depth of this node in the search tree, equal to the length of the path.
     int _depth;
 public:
-    Node() : _heuristic_cost(0), _actual_cost(0), _row(0), _col(0), _depth(0) {};
+    Node() : _evaluation_cost(0), _actual_cost(0), _row(0), _col(0), _depth(0) {};
 
-    Node(double heuristic_cost, double actual_cost, int row, int col, int depth) : _heuristic_cost(heuristic_cost),
-                                                                             _actual_cost(actual_cost), _row(row),
-                                                                             _col(col), _depth(depth) {};
+    Node(double heuristic_cost, double actual_cost, int row, int col, int depth) : _evaluation_cost(heuristic_cost),
+                                                                                   _actual_cost(actual_cost), _row(row),
+                                                                                   _col(col), _depth(depth) {};
 
-    Node(const Node &node) : _heuristic_cost(node.getHeuristicCost()), _actual_cost(node.getActualCost()),
+    Node(const Node &node) : _evaluation_cost(node.getEvaluationCost()), _actual_cost(node.getActualCost()),
                              _row(node.getRow()), _col(node.getCol()),
                              _depth(node.getDepth()) {
         this->setPathTilNow(node.getPathTilNow());
@@ -67,9 +67,9 @@ public:
 
     void setDepth(int depth);
 
-    double getHeuristicCost() const;
+    double getEvaluationCost() const;
 
-    void setHeuristicCost(double heuristicCost);
+    void setEvaluationCost(double heuristicCost);
 
     double getActualCost() const;
 
@@ -95,9 +95,9 @@ struct lessCompNodePointers {
     bool operator()(const shared_ptr<Node>& node1,const shared_ptr<Node>& node2) const {
         // tie breaking in favor of the smallest h(n) value
         // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
-        if (node1->getHeuristicCost() == node2->getHeuristicCost())
-            return (node1->getHeuristicCost() - node1->getActualCost()) < (node2->getHeuristicCost() - node2->getActualCost());
-        return node1->getHeuristicCost() < node2->getHeuristicCost();
+        if (node1->getEvaluationCost() == node2->getEvaluationCost())
+            return (node1->getEvaluationCost() - node1->getActualCost()) < (node2->getEvaluationCost() - node2->getActualCost());
+        return node1->getEvaluationCost() < node2->getEvaluationCost();
     }
 };
 
