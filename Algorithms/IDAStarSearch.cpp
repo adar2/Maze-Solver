@@ -37,7 +37,7 @@ int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int
             generate_stats(*sourceNode);
             return 1;
         }
-        // try to improve performance by limit f_limit steps by at least 2.
+        // try to improve performance by forcing f_limit steps to be least 2.
         if(f_limit - old_f_limit < min_jump)
             f_limit = old_f_limit + min_jump;
     }
@@ -60,7 +60,7 @@ IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>
         update_cutoffs(current_node->getDepth());
         return {current_node, current_node_f};
     }
-    getInstance()._expanded++;
+    ++getInstance()._expanded;
     successors = current_node->successors(array, dimension);
     for (const auto& node : *successors) {
         // avoid expanding nodes that are on current node path

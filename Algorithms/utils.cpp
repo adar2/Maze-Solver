@@ -70,11 +70,11 @@ void parse_file(const char *file_name) {
 
     if (algorithm_name == "BIASTAR") {
         BiDirectionalAStar::getInstance().setProblemName(file_name);
-        BiDirectionalAStar::getInstance().setHeuristicFunction(avg_distance);
+        BiDirectionalAStar::getInstance().setHeuristicFunction(chebyshev_distance);
         BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "IDASTAR") {
         IDAStarSearch::getInstance().setProblemName(file_name);
-        IDAStarSearch::getInstance().setHeuristicFunction(avg_distance);
+        IDAStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
         IDAStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else if (algorithm_name == "ASTAR") {
         AStarSearch::getInstance().setProblemName(file_name);

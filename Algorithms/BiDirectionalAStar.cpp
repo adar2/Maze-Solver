@@ -38,6 +38,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         setCurrentTime(clock());
         //check whether node v is at the top of both frontier_front and frontier_back
         if (*(*frontier_front.begin()) == *(*frontier_back.begin())) {
+            update_cutoffs((*frontier_front.begin())->getDepth());
             setEndStatus(true);
             break;
         }
@@ -89,6 +90,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         //check again as it may happen between the forward step to the backward step.
         //check whether node v is at the top of both frontier_front and frontier_back
         if (!frontier_front.empty() && !frontier_back.empty() && *(*frontier_front.begin()) == *(*frontier_back.begin())) {
+            update_cutoffs((*frontier_front.begin())->getDepth());
             setEndStatus(true);
             break;
         }

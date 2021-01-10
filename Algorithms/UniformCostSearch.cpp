@@ -38,6 +38,7 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
         ++getInstance()._expanded;
         if (*current_node == *goalNode || time_out) {
+            update_cutoffs(current_node->getDepth());
             if(!time_out){
                 // reached to goal state
                 setEndStatus(true);
@@ -65,5 +66,6 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
             update_cutoffs(current_node->getDepth());
         }
     }
+    generate_stats(*sourceNode);
     return 1;
 }

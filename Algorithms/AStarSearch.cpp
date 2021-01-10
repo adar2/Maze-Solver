@@ -42,10 +42,11 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         ++getInstance()._expanded;
         // if goal node reached or time out stop the search
         if (*current_node == *goalNode || time_out) {
+            update_cutoffs(current_node->getDepth());
             if (!time_out) {
                 setEndStatus(true);
             }
-            print_path(array, dimension, *current_node);
+//            print_path(array, dimension, *current_node);
             generate_stats(*current_node);
             return 0;
         }
