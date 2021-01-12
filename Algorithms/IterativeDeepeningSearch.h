@@ -3,15 +3,16 @@
 #ifndef AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 #define AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 
-#include "AlgorithmStatistics.h"
-#include "ISearchAlgorithm.h"
+#include "AbstractSearchAlgorithm.h"
 #include "utils.h"
 
-class IterativeDeepeningSearch : public ISearchAlgorithm, public AlgorithmStatistics {
+class IterativeDeepeningSearch : public AbstractSearchAlgorithm {
 private:
-    pair<shared_ptr<Node>, bool> DLS(double **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit);
+    pair<shared_ptr<Node>, bool>
+    DLS(double **array, int dimension, const shared_ptr<Node> &root, const shared_ptr<Node> &goal, int limit,
+        float time_limit);
 
-    IterativeDeepeningSearch() : AlgorithmStatistics() {};
+    IterativeDeepeningSearch() : AbstractSearchAlgorithm() {};
 
     IterativeDeepeningSearch(const IterativeDeepeningSearch &);
 

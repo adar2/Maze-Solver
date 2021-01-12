@@ -3,14 +3,13 @@
 #ifndef AI_PROJECT_BIDIRECTIONALASTAR_H
 #define AI_PROJECT_BIDIRECTIONALASTAR_H
 
-#include "AlgorithmStatistics.h"
+#include "AbstractSearchAlgorithm.h"
 #include "HeuristicSearch.h"
-#include "ISearchAlgorithm.h"
 #include "utils.h"
 
-class BiDirectionalAStar : public ISearchAlgorithm , public AlgorithmStatistics, public HeuristicSearch {
+class BiDirectionalAStar : public AbstractSearchAlgorithm, public HeuristicSearch {
 private:
-    BiDirectionalAStar() : AlgorithmStatistics(), HeuristicSearch() {};
+    BiDirectionalAStar() : AbstractSearchAlgorithm(), HeuristicSearch() {};
 
     BiDirectionalAStar(const BiDirectionalAStar &);
 

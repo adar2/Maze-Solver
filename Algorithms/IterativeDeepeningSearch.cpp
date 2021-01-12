@@ -15,7 +15,8 @@ IterativeDeepeningSearch &IterativeDeepeningSearch::getInstance() {
 
 
 pair<shared_ptr<Node>, bool>
-IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Node>& root,const shared_ptr<Node>& goal, int limit, float time_limit) {
+IterativeDeepeningSearch::DLS(double **array, int dimension, const shared_ptr<Node> &root, const shared_ptr<Node> &goal,
+                              int limit, float time_limit) {
     bool any_remaining = false, time_out;
     shared_ptr<vector<shared_ptr<Node>>> successors;
     stack<shared_ptr<Node>> frontier = stack<shared_ptr<Node>>();
@@ -38,13 +39,13 @@ IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Nod
             //increase the explored counter by one for the current node been expanded
             getInstance()._expanded++;
             explored[pair<int, int>(current_node->getRow(), current_node->getCol())] = true;
-            successors = current_node->successors(array,dimension);
+            successors = current_node->successors(array, dimension);
             // because we use stack , we push successors in reversed order.
-            for(auto i = successors->rbegin(); i!=successors->rend();++i ){
-                    if(explored[pair<int,int>((*i)->getRow(),(*i)->getCol())]){
-                        continue;
-                    }
-                    frontier.push((*i));
+            for (auto i = successors->rbegin(); i != successors->rend(); ++i) {
+                if (explored[pair<int, int>((*i)->getRow(), (*i)->getCol())]) {
+                    continue;
+                }
+                frontier.push((*i));
             }
         } else {
             any_remaining = true;
@@ -59,20 +60,19 @@ IterativeDeepeningSearch::DLS(double **array, int dimension,const shared_ptr<Nod
 int IterativeDeepeningSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     shared_ptr<Node> found;
     bool any_remaining;
-    shared_ptr<Node> sourceNode (new Node(0, 0, source[0], source[1], 0));
+    shared_ptr<Node> sourceNode(new Node(0, 0, source[0], source[1], 0));
     sourceNode->insertElementToPath(pair<int, int>(source[0], source[1]));
-    shared_ptr<Node>target( new Node(0, 0, goal[0], goal[1], 0));
+    shared_ptr<Node> target(new Node(0, 0, goal[0], goal[1], 0));
     for (int i = 0;; ++i) {
         auto result = DLS(array, dimension, sourceNode, target, i, time_limit);
         found = result.first;
         any_remaining = result.second;
         if (found != nullptr) {
-            // found the node
-//            print_path(array, dimension, *found);
+            // found the goalNode
             generate_stats(*found);
             return 0;// return success.
         }
-        if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining){
+        if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit || !any_remaining) {
             //time out or end of search tree reached
             generate_stats(*sourceNode);
             break;

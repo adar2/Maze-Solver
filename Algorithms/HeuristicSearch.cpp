@@ -13,12 +13,12 @@ void HeuristicSearch::sumNodeHeuristic(double h) {
 }
 
 double HeuristicSearch::getAvg() const {
-    if(_no_of_nodes == 0)
+    if (_no_of_nodes == 0)
         return 0;
     return (_nodes_heuristic_sum / _no_of_nodes);
 }
 
 void HeuristicSearch::generate_heuristic_stats() {
-    std::cout<< "Avg H Value: " << getAvg() << std::endl;
+    std::cout << "Avg H Value: " << getAvg() << std::endl;
 }
 

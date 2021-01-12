@@ -11,17 +11,38 @@
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
 
-double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
-    return std::max(abs(p1.first - p2.first),abs(p1.second - p2.second));
+static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name) {
+    if (algorithm_name == "BIASTAR") {
+        BiDirectionalAStar::getInstance().setHeuristicFunction(chebyshev_distance);
+        return &BiDirectionalAStar::getInstance();
+    } else if (algorithm_name == "IDASTAR") {
+        IDAStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
+        return &IDAStarSearch::getInstance();
+    } else if (algorithm_name == "ASTAR") {
+        AStarSearch::getInstance().setHeuristicFunction(avg_distance);
+        return &AStarSearch::getInstance();
+    } else if (algorithm_name == "UCS") {
+        return &UniformCostSearch::getInstance();
+    } else if (algorithm_name == "IDS") {
+        return &IterativeDeepeningSearch::getInstance();
+    } else {
+        return nullptr;
+    }
 }
 
-double avg_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2){
+double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2) {
+    return std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
+}
+
+double avg_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2) {
+    static double square_root = sqrt(2);
     int dx = abs(p1.first - p2.first);
     int dy = abs(p1.second - p2.second);
-    return double((dx + dy))/2;
+    return sqrt(pow(dx,2)+pow(dy,2)) / square_root;
 }
 
 void parse_file(const char *file_name) {
+    clock_t startTime = clock();
     std::string algorithm_name, dimension, sourceStr, targetStr;
     auto *source = new int[2];
     auto *target = new int[2];
@@ -29,7 +50,7 @@ void parse_file(const char *file_name) {
     std::ifstream inputFile(file_name);
     getline(inputFile, algorithm_name, '\n');
     // remove carriage return from algorithm name string.
-    if(algorithm_name.find('\r') != -1)
+    if (algorithm_name.find('\r') != -1)
         algorithm_name.erase(algorithm_name.size() - 1);
     getline(inputFile, dimension, '\n');
     getline(inputFile, sourceStr, '\n');
@@ -41,7 +62,7 @@ void parse_file(const char *file_name) {
     targetStr.erase(0, targetStr.find(',') + 1);
     target[1] = stoi(targetStr);
     int d = stoi(dimension);
-    time_limit = float(log2(d));
+    time_limit = 2 * float(log2(d));
     std::string tmpStr;
     auto **array = new double *[d];
     for (int i = 0; i < d; ++i) {
@@ -57,7 +78,8 @@ void parse_file(const char *file_name) {
             tmpStr.erase(0, pos + 1);
         }
     }
-    if(source[0] < 0 || source[0] >= d || source[1] < 0 || source[1] >= d || array[source[0]][source[1]] < 0 ||target[0] < 0 || target[0] >= d || target[1] < 0 || target[1] >= d || array[target[0]][target[1]] < 0 ){
+    if (source[0] < 0 || source[0] >= d || source[1] < 0 || source[1] >= d || array[source[0]][source[1]] < 0 ||
+        target[0] < 0 || target[0] >= d || target[1] < 0 || target[1] >= d || array[target[0]][target[1]] < 0) {
         delete[] source;
         delete[] target;
         for (int i = 0; i < d; ++i) {
@@ -67,25 +89,12 @@ void parse_file(const char *file_name) {
         std::cout << "Illegal input , aborting.." << std::endl;
         return;
     }
+    AbstractSearchAlgorithm *algorithm = getInstanceOf(algorithm_name);
+    if (algorithm) {
+        algorithm->setStartTime(startTime);
+        algorithm->setProblemName(file_name);
+        algorithm->run_algorithm(array, d, source, target, time_limit);
 
-    if (algorithm_name == "BIASTAR") {
-        BiDirectionalAStar::getInstance().setProblemName(file_name);
-        BiDirectionalAStar::getInstance().setHeuristicFunction(chebyshev_distance);
-        BiDirectionalAStar::getInstance().run_algorithm(array, d, source, target, time_limit);
-    } else if (algorithm_name == "IDASTAR") {
-        IDAStarSearch::getInstance().setProblemName(file_name);
-        IDAStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
-        IDAStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
-    } else if (algorithm_name == "ASTAR") {
-        AStarSearch::getInstance().setProblemName(file_name);
-        AStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
-        AStarSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
-    } else if (algorithm_name == "UCS") {
-        UniformCostSearch::getInstance().setProblemName(file_name);
-        UniformCostSearch::getInstance().run_algorithm(array,d,source,target,time_limit);
-    } else if (algorithm_name == "IDS") {
-        IterativeDeepeningSearch::getInstance().setProblemName(file_name);
-        IterativeDeepeningSearch::getInstance().run_algorithm(array, d, source, target, time_limit);
     } else {
         std::cout << "unknown algorithm, exiting.." << std::endl;
     }

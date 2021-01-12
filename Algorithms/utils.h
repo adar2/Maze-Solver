@@ -3,6 +3,8 @@
 #ifndef AI_PROJECT_UTILS_H
 #define AI_PROJECT_UTILS_H
 
+#include "AbstractSearchAlgorithm.h"
+
 // taken from Boost cpp , implementation for pair hashing used in unordered map.
 template<typename T>
 inline void hash_combine(std::size_t &seed, const T &val) {
@@ -35,10 +37,12 @@ struct pair_hash {
     }
 };
 
+static AbstractSearchAlgorithm *getInstanceOf(const char *algorithm_name);
+
 double chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
 double avg_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2);
 
-void parse_file(const char* file_name);
+void parse_file(const char *file_name);
 
 #endif //AI_PROJECT_UTILS_H

@@ -22,7 +22,8 @@ bool operator>(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
     if (node1.getEvaluationCost() == node2.getEvaluationCost())
-        return (node1.getEvaluationCost() - node1.getActualCost()) > (node2.getEvaluationCost() - node2.getActualCost());
+        return (node1.getEvaluationCost() - node1.getActualCost()) >
+               (node2.getEvaluationCost() - node2.getActualCost());
     return node1.getEvaluationCost() > node2.getEvaluationCost();
 }
 
@@ -30,7 +31,8 @@ bool operator<(const Node &node1, const Node &node2) {
     // tie breaking in favor of the smallest h(n) value
     // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
     if (node1.getEvaluationCost() == node2.getEvaluationCost())
-        return (node1.getEvaluationCost() - node1.getActualCost()) < (node2.getEvaluationCost() - node2.getActualCost());
+        return (node1.getEvaluationCost() - node1.getActualCost()) <
+               (node2.getEvaluationCost() - node2.getActualCost());
     return node1.getEvaluationCost() < node2.getEvaluationCost();
 }
 
@@ -70,11 +72,11 @@ void Node::setActualCost(double actualCost) {
     _actual_cost = actualCost;
 }
 
-shared_ptr<vector<shared_ptr<Node>>> Node::successors(double **array,const int& dimension) {
-    int row=0,col=0;
+shared_ptr<vector<shared_ptr<Node>>> Node::successors(double **array, const int &dimension) {
+    int row = 0, col = 0;
     double g_cost;
-    Node& current_node = *this;
-    shared_ptr<vector<shared_ptr<Node>>> successors (new vector<shared_ptr<Node>>());
+    Node &current_node = *this;
+    shared_ptr<vector<shared_ptr<Node>>> successors(new vector<shared_ptr<Node>>());
     for (int i = 0; i < ACTIONS_SIZE; ++i) {
         switch (actions(i)) {
             case U:

@@ -1,6 +1,6 @@
 
-#ifndef AI_PROJECT_ALGORITHMSTATISTICS_H
-#define AI_PROJECT_ALGORITHMSTATISTICS_H
+#ifndef AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
+#define AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
 
 #include <iostream>
 #include <string>
@@ -11,7 +11,7 @@
 #include <ctime>
 #include "Node.h"
 
-class AlgorithmStatistics {
+class AbstractSearchAlgorithm {
 protected:
     // true for success false for failure.
     bool _end_status;
@@ -36,8 +36,10 @@ protected:
     // keep track on time in order to limit algorithm run time
     clock_t _current_time;
 
-    AlgorithmStatistics() : _end_status(false), _dN(0), _ebf(0), _expanded(0), _min(std::numeric_limits<int>::max()), _max(0), _no_of_cutoffs(0), _sum_of_cutoffs_depths(0),
-                            _start_time(clock()), _current_time(0) {}
+    AbstractSearchAlgorithm() : _end_status(false), _dN(0), _ebf(0), _expanded(0),
+                                _min(std::numeric_limits<int>::max()), _max(0), _no_of_cutoffs(0),
+                                _sum_of_cutoffs_depths(0),
+                                _start_time(0), _current_time(0) {}
 
 public:
     bool getEndStatus() const {
@@ -59,12 +61,14 @@ public:
     double getDN() const { return _dN; };
 
     void setDN(double dN) { _dN = dN; };
+
     // calculate d/N branching factor using solution depth in case of success or with max cutoff depth in failure.
     void calcDN(int depth);
 
     double getEBF() const { return _ebf; };
 
     void setEBF(double ebf) { _ebf = ebf; };
+
     // calculate effective branching factor using solution depth in case of success or with max cutoff depth in failure.
     void calcEBF(int depth);
 
@@ -72,7 +76,7 @@ public:
 
     int getMin() const { return _min; };;
 
-    double getAvg() const ;
+    double getAvg() const;
 
     int getMax() const { return _max; };;
 
@@ -86,21 +90,28 @@ public:
         return _current_time;
     }
 
+    void setStartTime(const clock_t &startTime) { _start_time = startTime; }
+
     void setCurrentTime(const clock_t &currentTime) {
         _current_time = currentTime;
     }
+
     // static function for comparing time
-    static double diff_clock(const clock_t& clock1, const clock_t& clock2);
+    static double diff_clock(const clock_t &clock1, const clock_t &clock2);
+
     // function for maintain algorithm min,max and avg cutoff statistics/
     void update_cutoffs(int cutoff_depth);
+
     // function for statistics generation, overloaded in heuristic search algorithm to combine with heuristic stats.
     virtual void generate_stats(const Node &current_node);
+
+    // pure virtual function must be overridden to implement algorithm
+    virtual int run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) = 0;
 };
 
 
-
 // for debugging and path visualization purposes , will print the entire cost matrix with path marked by red on linux os
-static void print_path(double **array, int dimension,const Node &current_node) {
+static void print_path(double **array, int dimension, const Node &current_node) {
     auto path_start = current_node.getPathTilNow().begin();
     auto path_end = current_node.getPathTilNow().end();
     for (int i = 0; i < dimension; ++i) {
@@ -115,4 +126,4 @@ static void print_path(double **array, int dimension,const Node &current_node) {
     std::cout << std::endl;
 }
 
-#endif //AI_PROJECT_ALGORITHMSTATISTICS_H
+#endif //AI_PROJECT_ABSTRACTSEARCHALGORITHM_H

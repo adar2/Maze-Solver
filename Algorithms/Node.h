@@ -78,7 +78,7 @@ public:
     Node &operator=(const Node &node);
 
     // function that returns node successors as a vector of pointers to nodes.
-    shared_ptr<vector<shared_ptr<Node>>> successors(double **array,const int& dimension);
+    shared_ptr<vector<shared_ptr<Node>>> successors(double **array, const int &dimension);
 
     // friend functions, operator overloading for nodes comparison.
     friend bool operator==(const Node &node1, const Node &node2);
@@ -92,11 +92,12 @@ public:
 
 // functor to use as comparator in multiset of Node pointers.
 struct lessCompNodePointers {
-    bool operator()(const shared_ptr<Node>& node1,const shared_ptr<Node>& node2) const {
+    bool operator()(const shared_ptr<Node> &node1, const shared_ptr<Node> &node2) const {
         // tie breaking in favor of the smallest h(n) value
         // f_cost = g(n) + h(n) -> h(n) = f_cost - g_cost
         if (node1->getEvaluationCost() == node2->getEvaluationCost())
-            return (node1->getEvaluationCost() - node1->getActualCost()) < (node2->getEvaluationCost() - node2->getActualCost());
+            return (node1->getEvaluationCost() - node1->getActualCost()) <
+                   (node2->getEvaluationCost() - node2->getActualCost());
         return node1->getEvaluationCost() < node2->getEvaluationCost();
     }
 };
