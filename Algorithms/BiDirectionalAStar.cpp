@@ -21,7 +21,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
     int expand_counter;
     double sum, min = std::numeric_limits<double>::max();
     // h_cost is the heuristic cost of the node to goal node
-    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]));
+    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),getMinOfCostMatrix());
     // source node to start a search from it to goal node, and from goal node to source node.
     shared_ptr<Node> sourceNode(new Node(h_cost, 0, source[0], source[1], 0));
     // inserts source node coordinates to its path
@@ -60,7 +60,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             successors = current_node->successors(array, dimension);
             for (const auto &successor : *successors) {
                 expand_counter++;
-                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()));
+                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()),getMinOfCostMatrix());
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
@@ -116,7 +116,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             successors = current_node->successors(array, dimension);
             for (const auto &successor: *successors) {
                 expand_counter++;
-                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(sourceNode->getRow(), sourceNode->getCol()));
+                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(sourceNode->getRow(), sourceNode->getCol()),getMinOfCostMatrix());
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.

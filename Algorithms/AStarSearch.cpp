@@ -22,7 +22,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
     int expand_counter;
     // calc heuristic value of the source node.
     double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
-                                                     pair<int, int>(goal[0], goal[1]));
+                                                     pair<int, int>(goal[0], goal[1]),getMinOfCostMatrix());
     sumNodeHeuristic(h_cost);
     // init the source node
     shared_ptr<Node> sourceNode(new Node(h_cost, 0, source[0], source[1], 0));
@@ -57,7 +57,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         successors = current_node->successors(array, dimension);
         for (const auto &successor :*successors) {
             expand_counter++;
-            h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()));
+            h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()),getMinOfCostMatrix());
             successor->setEvaluationCost(successor->getActualCost() + h_cost);
             // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);

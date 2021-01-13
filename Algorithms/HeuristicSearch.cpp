@@ -3,7 +3,7 @@
 #include "HeuristicSearch.h"
 #include <iostream>
 
-void HeuristicSearch::setHeuristicFunction(double (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &)) {
+void HeuristicSearch::setHeuristicFunction(double (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &,double)) {
     _heuristic_function = heuristicFunction;
 }
 
@@ -20,5 +20,13 @@ double HeuristicSearch::getAvg() const {
 
 void HeuristicSearch::generate_heuristic_stats() {
     std::cout << "Avg H Value: " << getAvg() << std::endl;
+}
+
+double HeuristicSearch::getMinOfCostMatrix() const {
+    return _min_of_cost_matrix;
+}
+
+void HeuristicSearch::setMinOfCostMatrix(double minOfCostMatrix) {
+    _min_of_cost_matrix = minOfCostMatrix;
 }
 

@@ -79,3 +79,10 @@ void AbstractSearchAlgorithm::calcDN(int depth) {
         return;
     setDN(double(depth) / getExpanded());
 }
+
+void AbstractSearchAlgorithm::setProblemName(const std::string &problemName) {
+    std::string tmp = problemName;
+    tmp = tmp.substr(0, problemName.find(".txt"));
+    tmp.erase(std::remove_if(tmp.begin(),tmp.end(),[](const char &c){return !std::isalnum(c);}),tmp.end());
+    _problem_name = tmp;
+}

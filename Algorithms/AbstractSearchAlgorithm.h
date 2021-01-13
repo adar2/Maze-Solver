@@ -54,9 +54,7 @@ public:
         return _problem_name;
     }
 
-    void setProblemName(const std::string &problemName) {
-        _problem_name = problemName;
-    }
+    void setProblemName(const std::string &problemName);
 
     double getDN() const { return _dN; };
 
