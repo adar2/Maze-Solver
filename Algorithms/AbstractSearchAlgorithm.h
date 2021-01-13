@@ -116,20 +116,20 @@ public:
 };
 
 
-// for debugging and path visualization purposes , will print the entire cost matrix with path marked by red on linux os
-static void print_path(double **array, int dimension, const Node &current_node) {
-    auto path_start = current_node.getPathTilNow().begin();
-    auto path_end = current_node.getPathTilNow().end();
-    for (int i = 0; i < dimension; ++i) {
-        for (int j = 0; j < dimension; ++j) {
-            if (std::find(path_start, path_end, pair<int, int>(i, j)) != path_end) {
-                std::cout << "\033[1;31m" << '(' << array[i][j] << "), " << "\033[0m";
-            } else
-                std::cout << '(' << array[i][j] << "), ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-}
+// for debugging and path visualization purposes , will print the entire cost matrix with cells on optimal path marked by red on linux os
+//static void print_path(double **array, int dimension, const Node &current_node) {
+//    auto path_start = current_node.getPathTilNow().begin();
+//    auto path_end = current_node.getPathTilNow().end();
+//    for (int i = 0; i < dimension; ++i) {
+//        for (int j = 0; j < dimension; ++j) {
+//            if (std::find(path_start, path_end, pair<int, int>(i, j)) != path_end) {
+//                std::cout << "\033[1;31m" << '(' << array[i][j] << "), " << "\033[0m";
+//            } else
+//                std::cout << '(' << array[i][j] << "), ";
+//        }
+//        std::cout << std::endl;
+//    }
+//    std::cout << std::endl;
+//}
 
 #endif //AI_PROJECT_ABSTRACTSEARCHALGORITHM_H

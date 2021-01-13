@@ -13,7 +13,7 @@
 static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name, double min_val) {
     if (algorithm_name == "BIASTAR") {
         BiDirectionalAStar::getInstance().setMinOfCostMatrix(min_val);
-        BiDirectionalAStar::getInstance().setHeuristicFunction(normalized_euclidean_distance);
+        BiDirectionalAStar::getInstance().setHeuristicFunction(chebyshev_distance);
         return &BiDirectionalAStar::getInstance();
     } else if (algorithm_name == "IDASTAR") {
         IDAStarSearch::getInstance().setMinOfCostMatrix(min_val);
@@ -21,7 +21,7 @@ static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name,
         return &IDAStarSearch::getInstance();
     } else if (algorithm_name == "ASTAR") {
         AStarSearch::getInstance().setMinOfCostMatrix(min_val);
-        AStarSearch::getInstance().setHeuristicFunction(normalized_euclidean_distance);
+        AStarSearch::getInstance().setHeuristicFunction(chebyshev_distance);
         return &AStarSearch::getInstance();
     } else if (algorithm_name == "UCS") {
         return &UniformCostSearch::getInstance();
@@ -60,7 +60,7 @@ void parse_file(const char *file_name) {
     }
     getline(inputFile, algorithm_name, '\n');
     // remove carriage return from algorithm name string.
-    if (algorithm_name.find('\r') != -1) {
+    if (algorithm_name.find('\r') == std::string::npos) {
         algorithm_name.erase(algorithm_name.size() - 1);
     }
     getline(inputFile, dimensionStr, '\n');

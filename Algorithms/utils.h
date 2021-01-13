@@ -37,8 +37,6 @@ struct pair_hash {
     }
 };
 
-static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name, double min_val);
-
 double chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val);
 
 double normalized_euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val);
