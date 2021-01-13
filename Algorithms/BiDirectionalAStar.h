@@ -19,8 +19,6 @@ public:
     int run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) override;
 
     static BiDirectionalAStar &getInstance();
-
-    void generate_stats(const Node &current_node) override;
 };
 
 

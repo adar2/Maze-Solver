@@ -1,7 +1,6 @@
 
 
 #include <iostream>
-#include <fstream>
 #include <cstring>
 #include <algorithm>
 #include "utils.h"
@@ -11,7 +10,7 @@
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
 
-static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name,double min_val) {
+static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name, double min_val) {
     if (algorithm_name == "BIASTAR") {
         BiDirectionalAStar::getInstance().setMinOfCostMatrix(min_val);
         BiDirectionalAStar::getInstance().setHeuristicFunction(normalized_euclidean_distance);
@@ -33,29 +32,28 @@ static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name,
     }
 }
 
-double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2,double min_val) {
-    return min_val*std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
+double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2, double min_val) {
+    return min_val * std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
 }
 
-double normalized_euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2,double min_val) {
+double normalized_euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val) {
     static double square_root = sqrt(2);
     int dx = abs(p1.first - p2.first);
     int dy = abs(p1.second - p2.second);
-    return min_val*sqrt(pow(dx,2)+pow(dy,2)) / square_root;
+    return min_val * sqrt(pow(dx, 2) + pow(dy, 2)) / square_root;
 }
 
 void parse_file(const char *file_name) {
-    std::string algorithm_name, dimensionStr, sourceStr, targetStr,input_time_limit;
+    std::string algorithm_name, dimensionStr, sourceStr, targetStr, input_time_limit;
     auto *source = new int[2];
     auto *goal = new int[2];
     int dimension;
     float time_limit;
     double min = std::numeric_limits<double>::infinity();
     std::ifstream inputFile(file_name);
-    if(!inputFile.good())
-    {
-        delete [] source;
-        delete [] goal;
+    if (!inputFile.good()) {
+        delete[] source;
+        delete[] goal;
         std::cout << "File does not exist , aborting.." << std::endl;
         exit(1);
 
@@ -68,9 +66,10 @@ void parse_file(const char *file_name) {
     getline(inputFile, dimensionStr, '\n');
     dimension = stoi(dimensionStr);
     time_limit = float(log2(dimension));
-    std::cout << "The default time limit is currently: " << time_limit << " ,If you wish to change it please enter new float , Or press enter to continue: ";
-    std::getline(std::cin,input_time_limit);
-    if(!input_time_limit.empty())
+    std::cout << "The default time limit is currently: " << time_limit
+              << " ,If you wish to change it please enter new float , Or press enter to continue: ";
+    std::getline(std::cin, input_time_limit);
+    if (!input_time_limit.empty())
         time_limit = std::stof(input_time_limit);
     clock_t startTime = clock();
     getline(inputFile, sourceStr, '\n');
@@ -93,12 +92,14 @@ void parse_file(const char *file_name) {
             pos = tmpStr.find(',');
             token = tmpStr.substr(0, pos);
             array[i][j] = stod(token);
-            if(array[i][j] < min && array[i][j] > 0)
+            if (array[i][j] < min && array[i][j] > 0)
                 min = array[i][j];
             tmpStr.erase(0, pos + 1);
         }
     }
-    if (source[0] < 0 || source[0] >= dimension || source[1] < 0 || source[1] >= dimension || array[source[0]][source[1]] < 0 ||
+    inputFile.close();
+    if (source[0] < 0 || source[0] >= dimension || source[1] < 0 || source[1] >= dimension ||
+        array[source[0]][source[1]] < 0 ||
         goal[0] < 0 || goal[0] >= dimension || goal[1] < 0 || goal[1] >= dimension || array[goal[0]][goal[1]] < 0) {
         delete[] source;
         delete[] goal;
@@ -109,8 +110,9 @@ void parse_file(const char *file_name) {
         std::cout << "Illegal input , aborting.." << std::endl;
         return;
     }
-    AbstractSearchAlgorithm *algorithm = getInstanceOf(algorithm_name,min);
+    AbstractSearchAlgorithm *algorithm = getInstanceOf(algorithm_name, min);
     if (algorithm) {
+        algorithm->setAlgorithmName(algorithm_name);
         algorithm->setStartTime(startTime);
         algorithm->setProblemName(file_name);
         algorithm->run_algorithm(array, dimension, source, goal, time_limit);

@@ -13,7 +13,8 @@ int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int
     shared_ptr<Node> found;
     pair<shared_ptr<Node>, double> results;
     // initialize f_limit to the heuristic value of sourceNode
-    double f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),getMinOfCostMatrix());
+    double f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),
+                                         getMinOfCostMatrix());
     double old_f_limit;
     // try to improve performance by increase f_limit by at least min value in cost matrix
     double min_jump = getMinOfCostMatrix();
@@ -28,13 +29,13 @@ int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int
         f_limit = results.second;
         if (found != nullptr) {
             setEndStatus(true);
-            generate_stats(*found);
+            generate_stats(*found, getAvgHeuristicValue());
             return 0;
         }
         if (f_limit == std::numeric_limits<double>::infinity() ||
             diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
             //failed or timeout
-            generate_stats(*sourceNode);
+            generate_stats(*sourceNode, getAvgHeuristicValue());
             return 1;
         }
         // try to improve performance by forcing f_limit steps to be least 2.
@@ -49,7 +50,7 @@ IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>
     shared_ptr<Node> found;
     pair<shared_ptr<Node>, double> results_pair;
     shared_ptr<vector<shared_ptr<Node>>> successors;
-    double new_f,h_cost;
+    double new_f, h_cost;
     static double min_val = getMinOfCostMatrix();
     double next_f = std::numeric_limits<double>::infinity();
     double current_node_f = current_node->getEvaluationCost();
@@ -71,7 +72,8 @@ IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>
                       pair<int, int>(node->getRow(), node->getCol())) != current_node->getPathTilNow().end()) {
             continue;
         }
-        h_cost = _heuristic_function(pair<int, int>(node->getRow(), node->getCol()), pair<int, int>(goal->getRow(), goal->getCol()),min_val);
+        h_cost = _heuristic_function(pair<int, int>(node->getRow(), node->getCol()),
+                                     pair<int, int>(goal->getRow(), goal->getCol()), min_val);
         node->setEvaluationCost(node->getActualCost() + h_cost);
         sumNodeHeuristic(h_cost);
         results_pair = DFS_CONTOUR(array, dimension, node, goal, f_limit, time_limit);
@@ -86,7 +88,3 @@ IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node>
     return {nullptr, next_f};
 }
 
-void IDAStarSearch::generate_stats(const Node &current_node) {
-    AbstractSearchAlgorithm::generate_stats(current_node);
-    HeuristicSearch::generate_heuristic_stats();
-}

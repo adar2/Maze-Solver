@@ -3,6 +3,7 @@
 #define AI_PROJECT_ABSTRACTSEARCHALGORITHM_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <algorithm>
 #include <stack>
@@ -13,6 +14,8 @@
 
 class AbstractSearchAlgorithm {
 protected:
+    // for statistics file generation
+    std::string _algorithm_name;
     // true for success false for failure.
     bool _end_status;
     // file name of the maze
@@ -42,6 +45,11 @@ protected:
                                 _start_time(0), _current_time(0) {}
 
 public:
+
+    const std::string &getAlgorithmName() const;
+
+    void setAlgorithmName(const std::string &algorithmName);
+
     bool getEndStatus() const {
         return _end_status;
     }
@@ -101,7 +109,7 @@ public:
     void update_cutoffs(int cutoff_depth);
 
     // function for statistics generation, overloaded in heuristic search algorithm to combine with heuristic stats.
-    virtual void generate_stats(const Node &current_node);
+    void generate_stats(const Node &current_node, double avg_heuristic_val = 0);
 
     // pure virtual function must be overridden to implement algorithm
     virtual int run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) = 0;

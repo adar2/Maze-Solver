@@ -21,7 +21,8 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
     int expand_counter;
     double sum, min = std::numeric_limits<double>::max();
     // h_cost is the heuristic cost of the node to goal node
-    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),getMinOfCostMatrix());
+    double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),
+                                        getMinOfCostMatrix());
     // source node to start a search from it to goal node, and from goal node to source node.
     shared_ptr<Node> sourceNode(new Node(h_cost, 0, source[0], source[1], 0));
     // inserts source node coordinates to its path
@@ -44,7 +45,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         }
         // time out
         if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
-            generate_stats(*current_node);
+            generate_stats(*current_node, getAvgHeuristicValue());
             return 1;
         }
         if (!frontier_front.empty()) {
@@ -60,7 +61,9 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             successors = current_node->successors(array, dimension);
             for (const auto &successor : *successors) {
                 expand_counter++;
-                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()),getMinOfCostMatrix());
+                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()),
+                                             pair<int, int>(goalNode->getRow(), goalNode->getCol()),
+                                             getMinOfCostMatrix());
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
@@ -100,7 +103,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         }
         // time out
         if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
-            generate_stats(*current_node);
+            generate_stats(*current_node, getAvgHeuristicValue());
             return 1;
         }
         if (!frontier_back.empty()) {
@@ -116,7 +119,9 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             successors = current_node->successors(array, dimension);
             for (const auto &successor: *successors) {
                 expand_counter++;
-                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(sourceNode->getRow(), sourceNode->getCol()),getMinOfCostMatrix());
+                h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()),
+                                             pair<int, int>(sourceNode->getRow(), sourceNode->getCol()),
+                                             getMinOfCostMatrix());
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
@@ -159,7 +164,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             setCurrentTime(clock());
             if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
                 setEndStatus(false);
-                generate_stats(*current_node);
+                generate_stats(*current_node, getAvgHeuristicValue());
                 return 1;
             }
             auto found = std::find_if(frontier_back_begin, frontier_back_end,
@@ -180,7 +185,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             setCurrentTime(clock());
             if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
                 setEndStatus(false);
-                generate_stats(*current_node);
+                generate_stats(*current_node, getAvgHeuristicValue());
                 return 1;
             }
             auto found = std::find_if(visited_back_begin, visited_front_end,
@@ -202,10 +207,10 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             sol1->setDepth(sol1->getDepth() + 1);
         }
         sol1->setActualCost(sol1->getActualCost() + sol2->getActualCost() - array[sol1->getRow()][sol1->getCol()]);
-        generate_stats(*sol1);
+        generate_stats(*sol1, getAvgHeuristicValue());
         return 0;
     }
-    generate_stats(*sourceNode);
+    generate_stats(*sourceNode, getAvgHeuristicValue());
 
     return 1;
 }
@@ -215,9 +220,5 @@ BiDirectionalAStar &BiDirectionalAStar::getInstance() {
     return instance;
 }
 
-void BiDirectionalAStar::generate_stats(const Node &current_node) {
-    AbstractSearchAlgorithm::generate_stats(current_node);
-    HeuristicSearch::generate_heuristic_stats();
-}
 
 

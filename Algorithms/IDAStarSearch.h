@@ -23,7 +23,6 @@ public:
 
     static IDAStarSearch &getInstance();
 
-    void generate_stats(const Node &current_node) override;
 };
 
 

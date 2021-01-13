@@ -5,7 +5,7 @@
 
 #include "AbstractSearchAlgorithm.h"
 
-class UniformCostSearch :public AbstractSearchAlgorithm {
+class UniformCostSearch : public AbstractSearchAlgorithm {
 private:
     UniformCostSearch() : AbstractSearchAlgorithm() {};
 

@@ -8,45 +8,50 @@ double AbstractSearchAlgorithm::diff_clock(const clock_t &clock1, const clock_t 
 
 }
 
-void AbstractSearchAlgorithm::generate_stats(const Node &current_node) {
-    std::cout << "Problem : " << getProblemName() << std::endl;
-    std::cout << "total nodes explored: " << getExpanded() << std::endl;
+void AbstractSearchAlgorithm::generate_stats(const Node &current_node, double avg_heuristic_val) {
+    std::string output_filename = getAlgorithmName() + '_' + getProblemName() + ".txt";
+    std::ofstream outputFile(output_filename);
+    outputFile << "Problem : " << getProblemName() << std::endl;
+    outputFile << "total nodes explored: " << getExpanded() << std::endl;
     if (getEndStatus()) {
         auto path_start = current_node.getPathTilNow().begin();
         auto path_end = current_node.getPathTilNow().end();
         for (auto item = path_start + 1; item != path_end; ++item) {
             if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second - 1)
-                std::cout << "LU" << '-';
+                outputFile << "LU" << '-';
             if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second)
-                std::cout << "U" << '-';
+                outputFile << "U" << '-';
             if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second - 1)
-                std::cout << "LD" << '-';
+                outputFile << "LD" << '-';
             if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second)
-                std::cout << "D" << '-';
+                outputFile << "D" << '-';
             if (item->first == (item - 1)->first && item->second == (item - 1)->second + 1)
-                std::cout << "R" << '-';
+                outputFile << "R" << '-';
             if (item->first == (item - 1)->first && item->second == (item - 1)->second - 1)
-                std::cout << "L" << '-';
+                outputFile << "L" << '-';
             if (item->first == (item - 1)->first + 1 && item->second == (item - 1)->second + 1)
-                std::cout << "RD" << '-';
+                outputFile << "RD" << '-';
             if (item->first == (item - 1)->first - 1 && item->second == (item - 1)->second + 1)
-                std::cout << "RU" << '-';
+                outputFile << "RU" << '-';
         }
-        std::cout << " solution cost: " << current_node.getActualCost();
+        outputFile << " solution cost: " << current_node.getActualCost();
         calcEBF(current_node.getDepth());
         calcDN(current_node.getDepth());
     } else {
-        std::cout << "Failed";
+        outputFile << "Failed";
         calcEBF(getMax());
         calcDN(getMax());
     }
-    std::cout << std::endl;
-    std::cout << "d/N : " << getDN() << std::endl;
-    std::cout << "time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
-    std::cout << "EBF : " << getEBF() << std::endl;
-    std::cout << "Min cutoff : " << getMin() << std::endl;
-    std::cout << "Max cutoff : " << getMax() << std::endl;
-    std::cout << "Avg cutoff : " << getAvg() << std::endl;
+    outputFile << std::endl;
+    outputFile << "d/N : " << getDN() << std::endl;
+    outputFile << "time in seconds: " << diff_clock(_current_time, _start_time) << std::endl;
+    outputFile << "EBF : " << getEBF() << std::endl;
+    outputFile << "Min cutoff : " << getMin() << std::endl;
+    outputFile << "Max cutoff : " << getMax() << std::endl;
+    outputFile << "Avg cutoff : " << getAvg() << std::endl;
+    if (avg_heuristic_val > 0)
+        outputFile << "Avg H Value: " << avg_heuristic_val << std::endl;
+    outputFile.close();
 }
 
 double AbstractSearchAlgorithm::getAvg() const {
@@ -83,6 +88,14 @@ void AbstractSearchAlgorithm::calcDN(int depth) {
 void AbstractSearchAlgorithm::setProblemName(const std::string &problemName) {
     std::string tmp = problemName;
     tmp = tmp.substr(0, problemName.find(".txt"));
-    tmp.erase(std::remove_if(tmp.begin(),tmp.end(),[](const char &c){return !std::isalnum(c);}),tmp.end());
+    tmp.erase(std::remove_if(tmp.begin(), tmp.end(), [](const char &c) { return !std::isalnum(c); }), tmp.end());
     _problem_name = tmp;
+}
+
+const std::string &AbstractSearchAlgorithm::getAlgorithmName() const {
+    return _algorithm_name;
+}
+
+void AbstractSearchAlgorithm::setAlgorithmName(const std::string &algorithmName) {
+    _algorithm_name = algorithmName;
 }

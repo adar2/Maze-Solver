@@ -11,7 +11,8 @@ class HeuristicSearch {
 
 protected:
     // pointer to heuristic function
-    double (*_heuristic_function)(const pair<int, int> &, const pair<int, int> &,double);
+    double (*_heuristic_function)(const pair<int, int> &, const pair<int, int> &, double);
+
     // sum of heuristic value of all nodes explored
     double _nodes_heuristic_sum;
     // number of nodes explored, for the use of calculating the average h value.
@@ -19,24 +20,22 @@ protected:
     // minimum value of the costs matrix
     double _min_of_cost_matrix;
 
-    HeuristicSearch() : _heuristic_function(nullptr), _nodes_heuristic_sum(0), _no_of_nodes(0), _min_of_cost_matrix(0) {};
+    HeuristicSearch() : _heuristic_function(nullptr), _nodes_heuristic_sum(0), _no_of_nodes(0),
+                        _min_of_cost_matrix(0) {};
 
 public:
     // method for setting the heuristic function.
-    void setHeuristicFunction(double (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &,double));
+    void setHeuristicFunction(double (*heuristicFunction)(const pair<int, int> &, const pair<int, int> &, double));
 
     // add to sum node h value
     void sumNodeHeuristic(double h);
 
     // return avg h value of the search
-    double getAvg() const;
+    double getAvgHeuristicValue() const;
 
     double getMinOfCostMatrix() const;
 
     void setMinOfCostMatrix(double minOfCostMatrix);
-
-    // method for generate heuristic related stats.
-    virtual void generate_heuristic_stats();
 
 };
 

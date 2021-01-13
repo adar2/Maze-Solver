@@ -22,7 +22,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
     int expand_counter;
     // calc heuristic value of the source node.
     double h_cost = _heuristic_function(pair<int, int>(source[0], source[1]),
-                                                     pair<int, int>(goal[0], goal[1]),getMinOfCostMatrix());
+                                        pair<int, int>(goal[0], goal[1]), getMinOfCostMatrix());
     sumNodeHeuristic(h_cost);
     // init the source node
     shared_ptr<Node> sourceNode(new Node(h_cost, 0, source[0], source[1], 0));
@@ -46,7 +46,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
             if (!time_out) {
                 setEndStatus(true);
             }
-            generate_stats(*current_node);
+            generate_stats(*current_node, getAvgHeuristicValue());
             return 0;
         }
         // mark current node as visited
@@ -57,7 +57,8 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         successors = current_node->successors(array, dimension);
         for (const auto &successor :*successors) {
             expand_counter++;
-            h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()), pair<int, int>(goalNode->getRow(), goalNode->getCol()),getMinOfCostMatrix());
+            h_cost = _heuristic_function(pair<int, int>(successor->getRow(), successor->getCol()),
+                                         pair<int, int>(goalNode->getRow(), goalNode->getCol()), getMinOfCostMatrix());
             successor->setEvaluationCost(successor->getActualCost() + h_cost);
             // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);
@@ -91,7 +92,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
             update_cutoffs(current_node->getDepth());
         }
     }
-    generate_stats(*current_node);
+    generate_stats(*current_node, getAvgHeuristicValue());
     return 1;
 }
 
@@ -101,7 +102,3 @@ AStarSearch &AStarSearch::getInstance() {
     return instance;
 }
 
-void AStarSearch::generate_stats(const Node &current_node) {
-    AbstractSearchAlgorithm::generate_stats(current_node);
-    HeuristicSearch::generate_heuristic_stats();
-}

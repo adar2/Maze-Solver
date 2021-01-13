@@ -21,8 +21,6 @@ public:
 
     static AStarSearch &getInstance();
 
-    void generate_stats(const Node &current_node) override;
-
 
 };
 
