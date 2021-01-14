@@ -147,10 +147,12 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
         multiset<shared_ptr<Node>, lessCompNodePointers> intersection_front = multiset<shared_ptr<Node>, lessCompNodePointers>();
         // multiset that holds the nodes in the backward open list that are exists also in the front open list.
         multiset<shared_ptr<Node>, lessCompNodePointers> intersection_back = multiset<shared_ptr<Node>, lessCompNodePointers>();
-        auto cmp = [](const shared_ptr<Node> &p1, const shared_ptr<Node> &p2){return *p1 < *p2 && *p1 == *p2;};
+        auto cmp = [](const shared_ptr<Node> &p1, const shared_ptr<Node> &p2) { return *p1 < *p2 && *p1 == *p2; };
         // insert the intersecting nodes to the multiset respectively
-        std::set_intersection(frontier_front.begin(), frontier_front.end(), frontier_back.begin(), frontier_back.end(), std::inserter(intersection_front, intersection_front.begin()), cmp);
-        std::set_intersection(frontier_back.begin(), frontier_back.end(),frontier_front.begin(), frontier_front.end(),  std::inserter(intersection_back, intersection_back.begin()), cmp);
+        std::set_intersection(frontier_front.begin(), frontier_front.end(), frontier_back.begin(), frontier_back.end(),
+                              std::inserter(intersection_front, intersection_front.begin()), cmp);
+        std::set_intersection(frontier_back.begin(), frontier_back.end(), frontier_front.begin(), frontier_front.end(),
+                              std::inserter(intersection_back, intersection_back.begin()), cmp);
         const auto intersection_back_begin = intersection_back.begin();
         const auto intersection_back_end = intersection_back.end();
         for (const auto &element : intersection_front) {
@@ -180,7 +182,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                 generate_stats(*current_node, getAvgHeuristicValue());
                 return 1;
             }
-            auto found = visited_back.find(pair<int,int>(element.second->getRow(),element.second->getCol()));
+            auto found = visited_back.find(pair<int, int>(element.second->getRow(), element.second->getCol()));
             if (found != visited_back_end) {
                 sum = element.second->getActualCost() + found->second->getActualCost();
                 if (sum < min) {

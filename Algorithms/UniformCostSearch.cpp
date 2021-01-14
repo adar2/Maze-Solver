@@ -35,7 +35,7 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
         setCurrentTime(clock());
         current_node = *open_list.begin();
         open_list.erase(open_list.begin());
-        if(visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
+        if (visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
             continue;
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
         ++getInstance()._expanded;

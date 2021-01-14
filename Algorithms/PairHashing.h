@@ -2,6 +2,7 @@
 
 #ifndef AI_PROJECT_PAIRHASHING_H
 #define AI_PROJECT_PAIRHASHING_H
+
 // implementation for pair hashing used in unordered map.
 template<typename T>
 inline void hash_combine(std::size_t &seed, const T &val) {
@@ -33,4 +34,5 @@ struct pair_hash {
         return hash_val(p.first, p.second);
     }
 };
+
 #endif //AI_PROJECT_PAIRHASHING_H

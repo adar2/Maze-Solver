@@ -39,7 +39,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
         // get the node with the smallest h_cost value
         current_node = *open_list.begin();
         open_list.erase(open_list.begin());
-        if(visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
+        if (visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
             continue;
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
         ++getInstance()._expanded;
@@ -66,7 +66,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
             // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);
             auto visited_iterator = visited.find(pair<int, int>(successor->getRow(), successor->getCol()));
-            if(visited_iterator == visited.end())
+            if (visited_iterator == visited.end())
                 open_list.insert(successor);
                 // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
             else if (visited_iterator != visited.end() &&
