@@ -1,11 +1,8 @@
 
 
-#ifndef AI_PROJECT_UTILS_H
-#define AI_PROJECT_UTILS_H
-
-#include "AbstractSearchAlgorithm.h"
-
-// taken from Boost cpp , implementation for pair hashing used in unordered map.
+#ifndef AI_PROJECT_PAIRHASHING_H
+#define AI_PROJECT_PAIRHASHING_H
+// implementation for pair hashing used in unordered map.
 template<typename T>
 inline void hash_combine(std::size_t &seed, const T &val) {
     seed ^= std::hash<T>()(val) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -36,11 +33,4 @@ struct pair_hash {
         return hash_val(p.first, p.second);
     }
 };
-
-double chebyshev_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val);
-
-double normalized_euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val);
-
-void parse_file(const char *file_name);
-
-#endif //AI_PROJECT_UTILS_H
+#endif //AI_PROJECT_PAIRHASHING_H

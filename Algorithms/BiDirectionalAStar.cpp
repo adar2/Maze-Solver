@@ -1,6 +1,7 @@
 
 
 #include "BiDirectionalAStar.h"
+#include "PairHashing.h"
 #include <set>
 
 using std::multiset;

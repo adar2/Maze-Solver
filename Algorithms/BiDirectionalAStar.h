@@ -5,7 +5,6 @@
 
 #include "AbstractSearchAlgorithm.h"
 #include "HeuristicSearch.h"
-#include "utils.h"
 
 class BiDirectionalAStar : public AbstractSearchAlgorithm, public HeuristicSearch {
 private:

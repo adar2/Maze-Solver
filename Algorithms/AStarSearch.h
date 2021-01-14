@@ -4,7 +4,6 @@
 
 #include "AbstractSearchAlgorithm.h"
 #include "HeuristicSearch.h"
-#include "utils.h"
 
 class AStarSearch : public AbstractSearchAlgorithm, public HeuristicSearch {
 private:

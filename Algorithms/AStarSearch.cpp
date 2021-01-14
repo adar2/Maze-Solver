@@ -1,5 +1,6 @@
 
 #include "AStarSearch.h"
+#include "PairHashing.h"
 #include <vector>
 #include <set>
 

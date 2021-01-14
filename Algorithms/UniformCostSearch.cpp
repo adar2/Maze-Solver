@@ -1,8 +1,8 @@
 
 
 #include "UniformCostSearch.h"
+#include "PairHashing.h"
 #include <set>
-#include "utils.h"
 
 using std::multiset;
 using std::vector;

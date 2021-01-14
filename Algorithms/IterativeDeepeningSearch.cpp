@@ -1,6 +1,7 @@
 
 
 #include "IterativeDeepeningSearch.h"
+#include "PairHashing.h"
 
 
 using std::unordered_map;

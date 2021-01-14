@@ -3,12 +3,13 @@
 #include <iostream>
 #include <cstring>
 #include <algorithm>
-#include "utils.h"
+#include "Utils.h"
 #include "UniformCostSearch.h"
 #include "IterativeDeepeningSearch.h"
 #include "AStarSearch.h"
 #include "IDAStarSearch.h"
 #include "BiDirectionalAStar.h"
+#include "HeuristicFunctions.h"
 
 static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name, double min_val) {
     if (algorithm_name == "BIASTAR") {
@@ -30,17 +31,6 @@ static AbstractSearchAlgorithm *getInstanceOf(const std::string &algorithm_name,
     } else {
         return nullptr;
     }
-}
-
-double chebyshev_distance(const pair<int, int> &p1, const pair<int, int> &p2, double min_val) {
-    return min_val * std::max(abs(p1.first - p2.first), abs(p1.second - p2.second));
-}
-
-double normalized_euclidean_distance(const std::pair<int, int> &p1, const std::pair<int, int> &p2, double min_val) {
-    static double square_root = sqrt(2);
-    int dx = abs(p1.first - p2.first);
-    int dy = abs(p1.second - p2.second);
-    return min_val * sqrt(pow(dx, 2) + pow(dy, 2)) / square_root;
 }
 
 void parse_file(const char *file_name) {
