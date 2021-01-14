@@ -1,6 +1,4 @@
-//
-// Created by r00t on 1/14/21.
-//
+
 
 #ifndef AI_PROJECT_HEURISTICFUNCTIONS_H
 #define AI_PROJECT_HEURISTICFUNCTIONS_H

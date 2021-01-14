@@ -4,7 +4,6 @@
 #define AI_PROJECT_ITERATIVEDEEPENINGSEARCH_H
 
 #include "AbstractSearchAlgorithm.h"
-#include "Utils.h"
 
 class IterativeDeepeningSearch : public AbstractSearchAlgorithm {
 private:
