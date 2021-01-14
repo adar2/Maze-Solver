@@ -2,7 +2,6 @@
 #include "IDAStarSearch.h"
 #include <limits>
 
-using std::pair;
 
 IDAStarSearch &IDAStarSearch::getInstance() {
     static IDAStarSearch instance;
@@ -11,7 +10,7 @@ IDAStarSearch &IDAStarSearch::getInstance() {
 
 int IDAStarSearch::run_algorithm(double **array, int dimension, int *source, int *goal, float time_limit) {
     shared_ptr<Node> found;
-    pair<shared_ptr<Node>, double> results;
+    std::pair<shared_ptr<Node>, double> results;
     // initialize f_limit to the heuristic value of sourceNode
     double f_limit = _heuristic_function(pair<int, int>(source[0], source[1]), pair<int, int>(goal[0], goal[1]),
                                          getMinOfCostMatrix());
@@ -48,7 +47,7 @@ pair<shared_ptr<Node>, double>
 IDAStarSearch::DFS_CONTOUR(double **array, int dimension, const shared_ptr<Node> &current_node,
                            const shared_ptr<Node> &goal, double f_limit, float time_limit) {
     shared_ptr<Node> found;
-    pair<shared_ptr<Node>, double> results_pair;
+    std::pair<shared_ptr<Node>, double> results_pair;
     shared_ptr<vector<shared_ptr<Node>>> successors;
     double new_f, h_cost;
     static double min_val = getMinOfCostMatrix();
