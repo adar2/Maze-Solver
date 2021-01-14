@@ -60,7 +60,7 @@ void parse_file(const char *file_name) {
     }
     getline(inputFile, algorithm_name, '\n');
     // remove carriage return from algorithm name string.
-    if (algorithm_name.find('\r') == std::string::npos) {
+    if (algorithm_name.find('\r') != std::string::npos) {
         algorithm_name.erase(algorithm_name.size() - 1);
     }
     getline(inputFile, dimensionStr, '\n');

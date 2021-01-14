@@ -17,7 +17,7 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
     // closed list
     unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash> visited = unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash>();
     // open list
-    multiset<shared_ptr<Node>, lessCompNodePointers> frontier = multiset<shared_ptr<Node>, lessCompNodePointers>();
+    multiset<shared_ptr<Node>, lessCompNodePointers> open_list = multiset<shared_ptr<Node>, lessCompNodePointers>();
     shared_ptr<vector<shared_ptr<Node>>> successors;
     shared_ptr<Node> current_node;
     // time out indicator
@@ -30,11 +30,13 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
     // init goal node for goal reached comparison
     shared_ptr<Node> goalNode(new Node(0, 0, goal[0], goal[1], 0));
     // insert the source node to the open list
-    frontier.insert(sourceNode);
-    while (!frontier.empty()) {
+    open_list.insert(sourceNode);
+    while (!open_list.empty()) {
         setCurrentTime(clock());
-        current_node = *frontier.begin();
-        frontier.erase(frontier.begin());
+        current_node = *open_list.begin();
+        open_list.erase(open_list.begin());
+        if(visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
+            continue;
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
         ++getInstance()._expanded;
         if (*current_node == *goalNode || time_out) {
@@ -51,18 +53,14 @@ int UniformCostSearch::run_algorithm(double **array, int dimension, int *source,
         successors = current_node->successors(array, dimension);
         for (const auto &successor:*successors) {
             expand_counter++;
-            auto open_list_iterator = std::find_if(frontier.begin(), frontier.end(),
-                                                   [&successor](const shared_ptr<Node> &node) {
-                                                       return *node == *successor;
-                                                   });
             auto visited_iterator = visited.find(pair<int, int>(successor->getRow(), successor->getCol()));
             // if the node is not visited and not in the open list, add it to open list.
-            if (visited_iterator == visited.end() && open_list_iterator == frontier.end())
-                frontier.insert(successor);
-            else if (open_list_iterator != frontier.end() &&
-                     (*open_list_iterator)->getActualCost() > successor->getActualCost()) {
-                frontier.erase(open_list_iterator);
-                frontier.insert(successor);
+            if (visited_iterator == visited.end())
+                open_list.insert(successor);
+            else if (visited_iterator != visited.end() &&
+                     visited_iterator->second->getActualCost() > successor->getActualCost()) {
+                visited.erase(visited_iterator);
+                open_list.insert(successor);
             } else expand_counter--;
         }
         if (!expand_counter) {

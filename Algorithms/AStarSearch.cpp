@@ -14,7 +14,7 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
     // closed list
     unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash> visited = unordered_map<pair<int, int>, shared_ptr<Node>, pair_hash>();
     // open list
-    multiset<shared_ptr<Node>, lessCompNodePointers> frontier = multiset<shared_ptr<Node>, lessCompNodePointers>();
+    multiset<shared_ptr<Node>, lessCompNodePointers> open_list = multiset<shared_ptr<Node>, lessCompNodePointers>();
     shared_ptr<vector<shared_ptr<Node>>> successors;
     shared_ptr<Node> current_node;
     // time out indicator
@@ -31,13 +31,15 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
     // init goal node for goal reached comparison
     shared_ptr<Node> goalNode(new Node(0, 0, goal[0], goal[1], 0));
     // insert the source node to the open list
-    frontier.insert(sourceNode);
-    while (!frontier.empty()) {
+    open_list.insert(sourceNode);
+    while (!open_list.empty()) {
         // update current time for time out checking
         setCurrentTime(clock());
         // get the node with the smallest h_cost value
-        current_node = *frontier.begin();
-        frontier.erase(frontier.begin());
+        current_node = *open_list.begin();
+        open_list.erase(open_list.begin());
+        if(visited.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited.end())
+            continue;
         time_out = (diff_clock(getCurrentTime(), getStartTime()) >= time_limit);
         ++getInstance()._expanded;
         // if goal node reached or time out stop the search
@@ -62,26 +64,14 @@ int AStarSearch::run_algorithm(double **array, int dimension, int *source, int *
             successor->setEvaluationCost(successor->getActualCost() + h_cost);
             // sum successor h value for heuristics statistics.
             sumNodeHeuristic(h_cost);
-            // use std::find_if with lambada function as node pointers comparator.
-            auto open_list_iterator = std::find_if(frontier.begin(), frontier.end(),
-                                                   [&successor](const shared_ptr<Node> &node) {
-                                                       return *node == *successor;
-                                                   });
             auto visited_iterator = visited.find(pair<int, int>(successor->getRow(), successor->getCol()));
-            // if the node is not visited and not in the open list, add it to open list.
-            if (visited_iterator == visited.end() && open_list_iterator == frontier.end())
-                frontier.insert(successor);
-                // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
-            else if (open_list_iterator != frontier.end() &&
-                     (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
-                frontier.erase(open_list_iterator);
-                frontier.insert(successor);
-            }
+            if(visited_iterator == visited.end())
+                open_list.insert(successor);
                 // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
             else if (visited_iterator != visited.end() &&
                      visited_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
                 visited.erase(visited_iterator);
-                frontier.insert(successor);
+                open_list.insert(successor);
             }
                 // if we didnt got into one of the above cond, we didnt expended this node so decrement expend_counter.
             else expand_counter--;

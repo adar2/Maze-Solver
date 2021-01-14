@@ -52,6 +52,9 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_front.begin();
             frontier_front.erase(frontier_front.begin());
+            if (visited_front.find(pair<int, int>(current_node->getRow(), current_node->getCol())) !=
+                visited_front.end())
+                continue;
             ++getInstance()._expanded;
             // mark that node as visited in the front search
             visited_front[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
@@ -66,24 +69,14 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                                              getMinOfCostMatrix());
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
-                // use std::find_if with lambada function as node pointers comparator.
-                auto open_list_iterator = std::find_if(frontier_front.begin(), frontier_front.end(),
-                                                       [&successor](const shared_ptr<Node> &node) {
-                                                           return *node == *successor;
-                                                       });
-                auto explored_iterator = visited_front.find(pair<int, int>(successor->getRow(), successor->getCol()));
+                auto visited_iterator = visited_front.find(pair<int, int>(successor->getRow(), successor->getCol()));
                 // if the node is not visited and not in the open list, add it to open list.
-                if (explored_iterator == visited_front.end() && open_list_iterator == frontier_front.end())
-                    frontier_front.insert(successor);
-                    // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
-                else if (open_list_iterator != frontier_front.end() &&
-                         (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
-                    frontier_front.erase(open_list_iterator);
+                if (visited_iterator == visited_front.end())
                     frontier_front.insert(successor);
                     // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
-                } else if (explored_iterator != visited_front.end() &&
-                           explored_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
-                    visited_front.erase(explored_iterator);
+                else if (visited_iterator != visited_front.end() &&
+                         visited_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
+                    visited_front.erase(visited_iterator);
                     frontier_front.insert(successor);
                     // if we didnt get into one of the above cond, we didnt expended this node so decrement expend_counter.
                 } else expand_counter--;
@@ -110,6 +103,8 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             // get the node with the smallest h_cost, tie breaking is done by minimal h(n)
             current_node = *frontier_back.begin();
             frontier_back.erase(frontier_back.begin());
+            if (visited_back.find(pair<int, int>(current_node->getRow(), current_node->getCol())) != visited_back.end())
+                continue;
             ++getInstance()._expanded;
             // mark that node as visited in the front search
             visited_back[pair<int, int>(current_node->getRow(), current_node->getCol())] = current_node;
@@ -125,25 +120,14 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                 successor->setEvaluationCost(successor->getActualCost() + h_cost);
                 sumNodeHeuristic(h_cost);
                 // use std::find_if with lambada function as node pointers comparator.
-                auto open_list_iterator = std::find_if(frontier_back.begin(), frontier_back.end(),
-                                                       [&successor](const shared_ptr<Node> &node) {
-                                                           return *node == *successor;
-                                                       });
-                auto explored_iterator = visited_back.find(pair<int, int>(successor->getRow(), successor->getCol()));
+                auto visited_iterator = visited_back.find(pair<int, int>(successor->getRow(), successor->getCol()));
                 // if the node is not visited and not in the open list, add it to open list.
-                if (explored_iterator == visited_back.end() && open_list_iterator == frontier_back.end())
+                if (visited_iterator == visited_back.end())
                     frontier_back.insert(successor);
-                    // if the node is present in the open list but have a higher h_cost , remove it and insert the better one.
-                else if (open_list_iterator != frontier_back.end() &&
-                         (*open_list_iterator)->getEvaluationCost() > successor->getEvaluationCost()) {
-                    frontier_back.erase(open_list_iterator);
-                    frontier_back.insert(successor);
-
-                }
                     // if the node has been visited with higher h_cost, remove it from visited and insert it to open list with better h_cost
-                else if (explored_iterator != visited_back.end() &&
-                         explored_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
-                    visited_back.erase(explored_iterator);
+                else if (visited_iterator != visited_back.end() &&
+                         visited_iterator->second->getEvaluationCost() > successor->getEvaluationCost()) {
+                    visited_back.erase(visited_iterator);
                     frontier_back.insert(successor);
 
                 }
@@ -156,20 +140,28 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             }
         }
     }
-    // post search phase find the optimal cost, loop through open and closed lists and look for that path with minimum cost which is the optimal path
+    // post search phase find the optimal cost, loop through open and closed lists and look for the path with minimum cost which is the optimal path
     if (getEndStatus()) {
-        const auto frontier_back_begin = frontier_back.begin();
-        const auto frontier_back_end = frontier_back.end();
-        for (const auto &element : frontier_front) {
+        // multiset that holds the nodes in the front open list that are exists also in the backward open list.
+        multiset<shared_ptr<Node>, lessCompNodePointers> intersection_front = multiset<shared_ptr<Node>, lessCompNodePointers>();
+        // multiset that holds the nodes in the backward open list that are exists also in the front open list.
+        multiset<shared_ptr<Node>, lessCompNodePointers> intersection_back = multiset<shared_ptr<Node>, lessCompNodePointers>();
+        auto cmp = [](const shared_ptr<Node> &p1, const shared_ptr<Node> &p2){return *p1 < *p2 && *p1 == *p2;};
+        // insert the intersecting nodes to the multiset respectively
+        std::set_intersection(frontier_front.begin(), frontier_front.end(), frontier_back.begin(), frontier_back.end(), std::inserter(intersection_front, intersection_front.begin()), cmp);
+        std::set_intersection(frontier_back.begin(), frontier_back.end(),frontier_front.begin(), frontier_front.end(),  std::inserter(intersection_back, intersection_back.begin()), cmp);
+        const auto intersection_back_begin = intersection_back.begin();
+        const auto intersection_back_end = intersection_back.end();
+        for (const auto &element : intersection_front) {
             setCurrentTime(clock());
             if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
                 setEndStatus(false);
                 generate_stats(*current_node, getAvgHeuristicValue());
                 return 1;
             }
-            auto found = std::find_if(frontier_back_begin, frontier_back_end,
+            auto found = std::find_if(intersection_back_begin, intersection_back_end,
                                       [&element](const shared_ptr<Node> &node) { return *node == *element; });
-            if (found != frontier_back.end()) {
+            if (found != intersection_back_end) {
                 sum = element->getActualCost() + (*found)->getActualCost();
                 if (sum < min) {
                     min = sum;
@@ -179,8 +171,7 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             }
 
         }
-        const auto visited_back_begin = visited_back.begin();
-        const auto visited_front_end = visited_back.end();
+        const auto visited_back_end = visited_back.end();
         for (const auto &element: visited_front) {
             setCurrentTime(clock());
             if (diff_clock(getCurrentTime(), getStartTime()) >= time_limit) {
@@ -188,11 +179,8 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
                 generate_stats(*current_node, getAvgHeuristicValue());
                 return 1;
             }
-            auto found = std::find_if(visited_back_begin, visited_front_end,
-                                      [&element](const pair<pair<int, int>, shared_ptr<Node>> &pair) {
-                                          return *element.second == *pair.second;
-                                      });
-            if (found != visited_back.end()) {
+            auto found = visited_back.find(pair<int,int>(element.second->getRow(),element.second->getCol()));
+            if (found != visited_back_end) {
                 sum = element.second->getActualCost() + found->second->getActualCost();
                 if (sum < min) {
                     min = sum;
