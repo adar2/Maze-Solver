@@ -1,4 +1,4 @@
-# AI-Project
+# Maze-Solver
 
 Final project of University AI course.
 
