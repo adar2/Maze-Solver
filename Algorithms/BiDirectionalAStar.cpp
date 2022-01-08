@@ -193,6 +193,10 @@ int BiDirectionalAStar::run_algorithm(double **array, int dimension, int *source
             }
 
         }
+        if (!sol2 && !sol1){
+            sol1 = *frontier_front.begin();
+            sol2 = *frontier_back.begin();
+        }
         for (auto node = sol2->getPathTilNow().rbegin() + 1; node != sol2->getPathTilNow().rend(); ++node) {
             sol1->insertElementToPath(*node);
             sol1->setDepth(sol1->getDepth() + 1);
